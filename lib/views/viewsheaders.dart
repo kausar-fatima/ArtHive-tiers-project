@@ -1,0 +1,15 @@
+export 'package:art_hive_app/views/splashview.dart';
+export 'package:art_hive_app/views/loginview.dart';
+export 'package:art_hive_app/views/forgotpassview.dart';
+// export 'package:art_hive_app/views/otpview.dart';
+export 'package:art_hive_app/views/signup.dart';
+export 'package:art_hive_app/views/homeview.dart';
+export 'package:art_hive_app/views/myartsview.dart';
+export 'package:art_hive_app/views/artdetailsview.dart';
+export 'package:art_hive_app/views/components/listcontent.dart';
+export 'package:art_hive_app/views/components/navbarcontainer.dart';
+export 'package:art_hive_app/views/favoriteview.dart';
+export 'package:art_hive_app/views/profileview.dart';
+export 'package:art_hive_app/views/addeditartview.dart';
+export 'package:art_hive_app/views/components/custombutton.dart';
+export 'package:art_hive_app/views/components/customtextfield.dart';

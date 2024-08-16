@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "697576822656",
+    "project_id": "art-hive-app",
+    "storage_bucket": "art-hive-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:697576822656:android:7a890df1eb54b7f612d365",
+        "android_client_info": {
+          "package_name": "com.example.art_hive_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9KpyWV942oPt_u8B4EBV9KZLeNn1JlaE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
