@@ -56,17 +56,18 @@ ArtHive is a Flutter application designed for artists to showcase their artworks
 ### Install Dependencies
 ```bash
 flutter pub get
+```
 
 ## Firebase Configuration
 
 1. Add your Firebase configuration files to the respective directories:
-   - `GoogleService-Info.plist` for iOS
    - `google-services.json` for Android
 
 ## Run the App
 
 ```bash
 flutter run
+```
 
 ## Using the App
 
