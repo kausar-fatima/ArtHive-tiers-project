@@ -8,12 +8,13 @@ class FavoriteView extends StatefulWidget {
 }
 
 class _FavoriteViewState extends State<FavoriteView> {
+  final ArtworkController FavartworkController = Get.find<ArtworkController>();
   // Sample data for illustration
-  final List<Map<String, String>> artData = [
-    {"title": "Mystic Peaks", "artist": "Alex Rivera", "price": "\$200"},
-    {"title": "Ocean Breeze", "artist": "Emily Carter", "price": "\$150"},
-    // Add more artwork here
-  ];
+  // final List<Map<String, String>> artData = [
+  //   {"title": "Mystic Peaks", "artist": "Alex Rivera", "price": "\$200"},
+  //   {"title": "Ocean Breeze", "artist": "Emily Carter", "price": "\$150"},
+  //   // Add more artwork here
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,27 @@ class _FavoriteViewState extends State<FavoriteView> {
             child: Padding(
               padding:
                   const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-              child: ListContent(artData: artData, isFavorite: true),
+              child: FutureBuilder(
+                  future: FavartworkController.fetchFavoriteArtwork(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else {
+                      if (FavartworkController.artworks.isEmpty) {
+                        return const Center(
+                          child: Text('No artworks found'),
+                        );
+                      } else {
+                        return ListContent(
+                            artData: FavartworkController.artworks,
+                            isFavorite: true);
+                      }
+                    }
+                  }),
             ),
           ),
           floatingActionButton: FloatingActionButton(

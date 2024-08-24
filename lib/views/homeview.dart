@@ -8,12 +8,28 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  // Sample data for illustration
-  final List<Map<String, String>> artData = [
-    {"title": "Mystic Peaks", "artist": "Alex Rivera", "price": "\$200"},
-    {"title": "Ocean Breeze", "artist": "Emily Carter", "price": "\$150"},
-    // Add more artwork here
-  ];
+  final ArtworkController artworkController = Get.find<ArtworkController>();
+  final TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    artworkController.fetchArtworks();
+    searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    artworkController.searchArtworks(searchController.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +57,7 @@ class _HomeViewState extends State<HomeView> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TextFormField(
+                    controller: searchController,
                     decoration: InputDecoration(
                       prefixIcon: Icon(
                         Icons.search,
@@ -56,7 +73,30 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
-              Expanded(child: ListContent(artData: artData, isFavorite: false)),
+              Expanded(
+                child: StreamBuilder(
+                  stream: artworkController.artworks.stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else {
+                      if (artworkController.artworks.isEmpty) {
+                        return const Center(
+                          child: Text('No artworks found'),
+                        );
+                      } else {
+                        return ListContent(
+                            artData: artworkController.artworks,
+                            isFavorite: false);
+                      }
+                    }
+                  },
+                ),
+              ),
             ],
           ),
           floatingActionButton: FloatingActionButton(

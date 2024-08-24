@@ -12,10 +12,15 @@ class _SplashViewState extends State<SplashView> {
     Future.delayed(const Duration(seconds: 3), () {
       final UserController userController = Get.find<UserController>();
       userController.loadUser();
+      //userController.clearUser(userController.user.value!.email);
+
       if (userController.user.value == null ||
           userController.user.value!.isLoggedIn != true) {
         Get.offAndToNamed(MyGet.login);
       } else {
+        debugPrint("********${userController.user.value!.email}**********");
+        debugPrint("********${userController.user.value!.name}**********");
+        debugPrint("********${userController.user.value!.password}**********");
         Get.offAndToNamed(MyGet.home);
       }
     });
@@ -34,7 +39,7 @@ class _SplashViewState extends State<SplashView> {
         children: [
           Image.asset(
             'assets/background(3).jpg',
-            fit: BoxFit.cover, // Ensures the image covers the entire screen
+            fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
           ),

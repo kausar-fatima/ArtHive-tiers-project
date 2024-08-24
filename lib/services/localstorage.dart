@@ -35,6 +35,8 @@ class LocalStorageService {
           imageUrl: imageUrl,
           isLoggedIn: isLoggedIn,
         );
+      } else {
+        debugPrint("There are null values");
       }
       return null;
     } catch (e) {

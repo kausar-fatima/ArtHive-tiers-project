@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       initialBinding: AppBinding(),
       initialRoute: MyGet.inital_,
       getPages: MyGet.pages(),

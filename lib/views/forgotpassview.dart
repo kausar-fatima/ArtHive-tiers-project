@@ -3,6 +3,7 @@ import 'package:art_hive_app/headers.dart';
 class ForgotPasswordView extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   // final UserController userController = Get.find<UserController>();
 
@@ -13,15 +14,19 @@ class ForgotPasswordView extends StatelessWidget {
     String email = emailController.text.trim();
     String newPassword = newPasswordController.text.trim();
 
-    final User? user = await userController.firebaseService.getUser(email);
+    if (_formKey.currentState!.validate()) {
+      final User? user = await userController.firebaseService.getUser(email);
 
-    if (user != null) {
-      user.password = newPassword;
-      await userController.saveUser(user); // Save updated user data
-      Get.snackbar('Success', 'Password reset successfully.');
-      Get.back(); // Navigate back to login
+      if (user != null) {
+        user.password = newPassword;
+        await userController.saveUser(user); // Save updated user data
+        Get.snackbar('Success', 'Password reset successfully.');
+        Get.back(); // Navigate back to login
+      } else {
+        Get.snackbar('Error', 'User does not exist.');
+      }
     } else {
-      Get.snackbar('Error', 'User does not exist.');
+      Get.snackbar('Error', 'Please fix the errors in the form.');
     }
   }
 
@@ -49,6 +54,7 @@ class ForgotPasswordView extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Form(
+                  key: _formKey,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,6 +68,7 @@ class ForgotPasswordView extends StatelessWidget {
                       // Email TextFormField
                       customTextField(
                         controller: emailController,
+                        validator: InputValidators.validateEmail,
                         hinttext: "Email",
                         isobscure: false,
                         icon: Icon(Icons.mail_outline),
@@ -72,6 +79,7 @@ class ForgotPasswordView extends StatelessWidget {
                       // Password TextFormField
                       customTextField(
                         controller: newPasswordController,
+                        validator: InputValidators.validatePassword,
                         hinttext: "New Password",
                         isobscure: true,
                         icon: Icon(Icons.lock_outline_rounded),

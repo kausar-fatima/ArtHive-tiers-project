@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:art_hive_app/headers.dart';
 
 class UserController extends GetxController {
@@ -10,12 +12,79 @@ class UserController extends GetxController {
 
   void loadUser() {
     user.value = localStorageService.getUser();
+    //localStorageService.clearUser();
   }
 
   Future<void> saveUser(User newUser) async {
-    await localStorageService.saveUser(newUser);
-    await firebaseService.saveUser(newUser);
-    user.value = newUser;
+    // Check if the email is already in use by another user
+    bool emailExists = await firebaseService.checkIfEmailExists(newUser.email);
+    if (emailExists) {
+      // If the email already exists, don't allow the save
+      Get.snackbar("Sign up Error", "Email already registered");
+    } else {
+      await localStorageService.saveUser(newUser);
+      await firebaseService.saveUser(newUser);
+      user.value = newUser;
+    }
+  }
+
+  // Method to update user information with email uniqueness check
+  Future<bool> updateUser({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    if (user.value != null) {
+      // Check if the email is being changed
+      if (user.value!.email != email) {
+        // Check if the new email is already in use by another user
+        bool emailExists = await firebaseService.checkIfEmailExists(email);
+
+        if (emailExists) {
+          // If the email already exists, don't allow the update
+          print(
+              "*********** Email already in use by another user: $email ***********");
+          return false; // Optionally, throw an exception or show an error message to the user here
+        }
+        // Copy existing user data to the new email
+        await firebaseService.copyUserData(
+            oldEmail: user.value!.email, newEmail: email);
+
+        // Delete old email entry
+        await firebaseService.deleteUser(user.value!.email);
+      }
+
+      // Update user fields in Firebase
+      await firebaseService.updateUserField(email, 'name', name);
+      await firebaseService.updateUserField(email, 'email', email);
+      await firebaseService.updateUserField(email, 'password', password);
+
+      // Update the in-memory user object
+      user.value!.name = name;
+      user.value!.email = email;
+      user.value!.password = password;
+
+      // Save updated user data to local storage
+      await localStorageService.saveUser(user.value!);
+
+      return true;
+    }
+    return false;
+  }
+
+  // Method to update user profile Image
+  Future<void> updateUserImage(File imageFile) async {
+    if (user.value != null) {
+      // Update the in-memory user object
+      user.value!.imageUrl = imageFile.path;
+
+      // Save updated user data to local storage
+      await localStorageService.saveUser(user.value!);
+
+      // Update user fields in Firebase
+      await firebaseService.updateUserField(
+          user.value!.email, 'imageUrl', imageFile.path);
+    }
   }
 
   // New method to update only the isLoggedIn field
@@ -33,8 +102,14 @@ class UserController extends GetxController {
     }
   }
 
-  Future<void> clearUser() async {
+  Future<void> clearUser(String email) async {
+    // Clear the user data from local storage
     await localStorageService.clearUser();
+
+    // Clear the user data from Firebase
+    await firebaseService.deleteUser(email);
+
+    // Clear the in-memory user object
     user.value = null;
   }
 }

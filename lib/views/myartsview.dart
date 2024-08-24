@@ -8,12 +8,13 @@ class MyArtsView extends StatefulWidget {
 }
 
 class _MyArtsViewState extends State<MyArtsView> {
+  final ArtworkController artworkController = Get.find<ArtworkController>();
   // Sample data for illustration
-  final List<Map<String, String>> artData = [
-    {"title": "Mystic Peaks", "artist": "Alex Rivera", "price": "\$200"},
-    {"title": "Ocean Breeze", "artist": "Emily Carter", "price": "\$150"},
-    // Add more artwork here
-  ];
+  // final List<Map<String, String>> artData = [
+  //   {"title": "Mystic Peaks", "artist": "Alex Rivera", "price": "\$200"},
+  //   {"title": "Ocean Breeze", "artist": "Emily Carter", "price": "\$150"},
+  //   // Add more artwork here
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +43,24 @@ class _MyArtsViewState extends State<MyArtsView> {
           body: Padding(
             padding:
                 const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-            child: myArtsListContent(
-              artData: artData,
+            child: FutureBuilder<void>(
+              future: artworkController.fetchMyArtwork(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  // Check if artworkController.artworks is empty
+                  if (artworkController.artworks.isEmpty) {
+                    return const Center(child: Text('No artworks found.'));
+                  } else {
+                    return MyArtsListContent(
+                      artData: artworkController.artworks,
+                    );
+                  }
+                }
+              },
             ),
           ),
           floatingActionButton: FloatingActionButton(
@@ -73,19 +90,20 @@ class _MyArtsViewState extends State<MyArtsView> {
   }
 }
 
-class myArtsListContent extends StatelessWidget {
-  const myArtsListContent({
-    super.key,
+class MyArtsListContent extends StatelessWidget {
+  final ArtworkController artworkController = Get.find<ArtworkController>();
+  MyArtsListContent({
+    Key? key,
     required this.artData,
-  });
+  }) : super(key: key);
 
-  final List<Map<String, String>> artData;
+  final RxList<Artwork> artData;
 
   @override
   Widget build(BuildContext context) {
     var _size = MediaQuery.of(context).size;
-    return Expanded(
-      child: ListView.builder(
+    return Obx(() {
+      return ListView.builder(
         itemCount: artData.length, // Specify the number of items
         itemBuilder: (BuildContext context, int index) {
           final artItem = artData[index]; // Get the data for the current item
@@ -95,7 +113,16 @@ class myArtsListContent extends StatelessWidget {
               onTap: () {
                 Get.to(
                   () => ArtDetailsView(
-                    artData: artData[index],
+                    artData: {
+                      'title': artItem.title,
+                      'artist': artItem.artistName,
+                      'price': artItem.price.toString(),
+                      'description': artItem.description,
+                      'imageUrl': artItem.imageUrl,
+                      'phoneNo': artItem.phoneNo.toString(),
+                      'artistStyle': artItem.artStyle,
+                      'isFavorite': artItem.isFavorite,
+                    },
                     ismyart: true,
                   ),
                 );
@@ -113,49 +140,84 @@ class myArtsListContent extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          'assets/art${index + 1}.jpg',
+                        child: Image.network(
+                          artItem.imageUrl.isEmpty
+                              ? "assets/placeholder.jpg"
+                              : artItem.imageUrl, // Use image URL from artwork
                           height: _size.width * 0.46,
                           width: double.infinity,
                           fit: BoxFit.cover,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child; // Image is fully loaded
+                            } else {
+                              return Center(
+                                child: Container(
+                                  height: _size.width * 0.46,
+                                  width: double.infinity,
+                                  color: Colors.grey[
+                                      300], // Background color while loading
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                      null &&
+                                                  loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      0
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  (loadingProgress
+                                                          .expectedTotalBytes ??
+                                                      1)
+                                              : null,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: _size.width * 0.46,
+                              width: double.infinity,
+                              color: Colors.grey[300],
+                              child: Icon(
+                                Icons.error,
+                                color: Colors.red,
+                                size: 40,
+                              ),
+                            );
+                          },
                         ),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
+                      SizedBox(height: 10),
                       Text(
-                        artItem['title'] ?? '',
+                        artItem.title,
                         style: AppFonts.heading3,
                         overflow: TextOverflow.ellipsis, // Handle overflow
                         maxLines: 1, // Limit to one line
                       ),
                       Text(
-                        artItem['artist'] ?? '',
+                        artItem.artistName,
                         style: AppFonts.bodyText1,
                         overflow: TextOverflow.ellipsis, // Handle overflow
                         maxLines: 1, // Limit to one line
                       ),
-
-                      SizedBox(
-                        height: 10,
-                      ),
-
+                      SizedBox(height: 10),
                       Text(
-                        'This artwork features a surreal landscape with sharp, towering mountain peaks that merge into a blurred, abstract central area, suggesting a mysterious or dream-like quality. The color palette is rich with deep blues, warm oranges, and vibrant reds at the base, which could represent lava or a fiery abyss. The contrast between the realistic mountains and the abstract elements creates an intriguing visual tension',
+                        artItem.description,
                         style: AppFonts.bodyText2,
                         overflow: TextOverflow.ellipsis, // Handle overflow
                         maxLines: 3, // Limit to three lines
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-
-                      // Edit and Delete buttons
+                      SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            artItem['price'] ?? '',
+                            '\$${artItem.price}',
                             style: AppFonts.bodyText1,
                           ),
                           Spacer(),
@@ -165,7 +227,10 @@ class myArtsListContent extends StatelessWidget {
                               color: primarycolor,
                             ),
                             onPressed: () {
-                              Get.to(() => AddEditArtworkView(isEdit: true));
+                              Get.to(() => AddEditArtworkView(
+                                    isEdit: true,
+                                    artwork: artItem,
+                                  ));
                             },
                           ),
                           IconButton(
@@ -173,8 +238,23 @@ class myArtsListContent extends StatelessWidget {
                               Icons.delete,
                               color: Colors.red,
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               // Implement delete functionality
+
+                              bool? confirm = await showConfirmationDialog(
+                                context,
+                                title: "Delete My Artwork",
+                                content: "Are you sure to delete your Artwork",
+                              );
+                              if (confirm!) {
+                                artData.removeAt(index);
+                                await artworkController
+                                    .deleteArtwork(artItem.id);
+                                Get.snackbar("Successful Deletion",
+                                    "Arwork deleted successfully");
+                              } else {
+                                Get.snackbar("Cancelled", "Deletion cancelled");
+                              }
                             },
                           ),
                         ],
@@ -186,7 +266,7 @@ class myArtsListContent extends StatelessWidget {
             ),
           );
         },
-      ),
-    );
+      );
+    });
   }
 }

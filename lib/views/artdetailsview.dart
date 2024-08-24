@@ -1,10 +1,28 @@
 import 'package:art_hive_app/headers.dart';
 
-class ArtDetailsView extends StatelessWidget {
-  final Map<String, String> artData;
+// ignore: must_be_immutable
+class ArtDetailsView extends StatefulWidget {
+  final Map<String, dynamic> artData;
 
   ArtDetailsView({required this.artData, required this.ismyart});
   final bool ismyart;
+
+  @override
+  State<ArtDetailsView> createState() => _ArtDetailsViewState();
+}
+
+class _ArtDetailsViewState extends State<ArtDetailsView> {
+  final ArtworkController artworkController = Get.find<ArtworkController>();
+  late String text;
+  late bool isfav;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isfav = widget.artData['isFavorite'];
+    text = isfav ? "Remove from Favorite" : "Add to Favorite";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +34,8 @@ class ArtDetailsView extends StatelessWidget {
               height: double.infinity,
               width: double.infinity,
               child: Image.asset(
-                'assets/background.jpg', // Replace with your background image path
-                fit: BoxFit.fill, // Cover the entire screen
+                'assets/background.jpg',
+                fit: BoxFit.fill,
               ),
             ),
             SingleChildScrollView(
@@ -35,9 +53,51 @@ class ArtDetailsView extends StatelessWidget {
                           borderRadius: BorderRadius.all(
                             Radius.circular(24),
                           ),
-                          child: Image.asset(
-                            'assets/art1.jpg', // Dynamic image path
+                          child: Image.network(
+                            widget.artData['imageUrl'] == null
+                                ? "assets/placeholder.jpg"
+                                : widget
+                                    .artData['imageUrl']!, // Dynamic image path
                             fit: BoxFit.cover,
+                            loadingBuilder: (BuildContext context, Widget child,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) {
+                                return child; // Image is fully loaded
+                              } else {
+                                return Center(
+                                  child: Container(
+                                    color: Colors.grey[
+                                        300], // Background color while loading
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null &&
+                                                loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    0
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                (loadingProgress
+                                                        .expectedTotalBytes ??
+                                                    1)
+                                            : null,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey[300],
+                                child: Icon(
+                                  Icons.error,
+                                  color: Colors.red,
+                                  size: 40,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -47,7 +107,7 @@ class ArtDetailsView extends StatelessWidget {
                         child: IconButton(
                           icon: Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            Get.back();
                           },
                         ),
                       ),
@@ -61,13 +121,13 @@ class ArtDetailsView extends StatelessWidget {
                       children: [
                         // Artwork title
                         Text(
-                          artData['title'] ?? '',
+                          widget.artData['title']!,
                           style: AppFonts.heading1.copyWith(fontSize: 24),
                         ),
                         SizedBox(height: 10),
                         // Artist name
                         Text(
-                          'by ${artData['artist']}',
+                          'by ${widget.artData['artist']}',
                           style: AppFonts.bodyText1.copyWith(
                               fontStyle: FontStyle.italic,
                               color: Colors.grey[700]),
@@ -80,7 +140,7 @@ class ArtDetailsView extends StatelessWidget {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          'This artwork features a surreal landscape with sharp, towering mountain peaks that merge into a blurred, abstract central area, suggesting a mysterious or dream-like quality. The color palette is rich with deep blues, warm oranges, and vibrant reds at the base, which could represent lava or a fiery abyss. The contrast between the realistic mountains and the abstract elements creates an intriguing visual tension',
+                          widget.artData['description']!,
                           style: AppFonts.bodyText2,
                         ),
                         SizedBox(height: 20),
@@ -91,7 +151,7 @@ class ArtDetailsView extends StatelessWidget {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          'Abstract, Surrealism',
+                          widget.artData['artistStyle']!,
                           style: AppFonts.bodyText2,
                         ),
                         SizedBox(height: 20),
@@ -102,7 +162,7 @@ class ArtDetailsView extends StatelessWidget {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          artData['price'] ?? '',
+                          "\$${widget.artData['price']!}",
                           style: AppFonts.bodyText1,
                         ),
                         SizedBox(height: 20),
@@ -113,17 +173,31 @@ class ArtDetailsView extends StatelessWidget {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          '+1 (123) 456-7890',
+                          widget.artData['phoneNo']!,
                           style: AppFonts.bodyText1,
                         ),
                         SizedBox(height: 30),
-                        // Add to cart button
-                        if (!ismyart)
+                        // Add to favorite button
+                        if (!widget.ismyart)
                           CustomButton(
-                              onpress: () {},
-                              text: 'Add to Favorite',
+                              onpress: () {
+                                // Add to favorite
+                                setState(
+                                  () {
+                                    isfav = !isfav;
+                                    if (isfav) {
+                                      text = "Remove from Favorite";
+                                    } else if (!isfav) {
+                                      text = "Add to Favorite";
+                                    }
+                                  },
+                                );
+                                artworkController.updateFavoriteStatus(
+                                    widget.artData['id']!, isfav, true);
+                              },
+                              text: text,
                               parver: 15.0),
-                        if (!ismyart) SizedBox(height: 30),
+                        if (!widget.ismyart) SizedBox(height: 30),
                       ],
                     ),
                   ),

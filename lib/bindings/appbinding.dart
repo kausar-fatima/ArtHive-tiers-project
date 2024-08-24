@@ -8,9 +8,13 @@ class AppBinding extends Bindings {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // Using Get.put for immediate initialization
-    Get.put<LocalStorageService>(LocalStorageService(prefs));
-    Get.put<FirebaseService>(FirebaseService());
-    Get.put<UserController>(UserController(
-        Get.find<LocalStorageService>(), Get.find<FirebaseService>()));
+    Get.put<LocalStorageService>(LocalStorageService(prefs), permanent: true);
+    Get.put<FirebaseService>(FirebaseService(), permanent: true);
+
+    Get.put<UserController>(
+        UserController(
+            Get.find<LocalStorageService>(), Get.find<FirebaseService>()),
+        permanent: true);
+    Get.put<ArtworkController>(ArtworkController(), permanent: true);
   }
 }

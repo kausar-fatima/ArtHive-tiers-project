@@ -9,6 +9,7 @@ class customTextField extends StatelessWidget {
     required this.icon,
     required this.maxline,
     required this.isdesc,
+    required this.validator,
   });
 
   final TextEditingController controller;
@@ -17,11 +18,13 @@ class customTextField extends StatelessWidget {
   final Icon icon;
   final int maxline;
   final bool isdesc;
+  final String? Function(String?) validator;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      validator: validator,
       decoration: InputDecoration(
         hintText: hinttext,
         hintStyle: AppFonts.bodyText2,

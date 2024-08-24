@@ -1,20 +1,73 @@
+import 'dart:io';
+
 import 'package:art_hive_app/headers.dart';
 
-class ProfileView extends StatelessWidget {
-  final String name = 'Fatima';
-  final String email = 'fatima@gmail.com';
-  final String contactNo = '123-456-7890';
+class ProfileView extends StatefulWidget {
+  const ProfileView({super.key});
 
-  const ProfileView({super.key}); // Change as needed
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+  final UserController userController = Get.find<UserController>();
+  final ArtworkController artworkController = Get.find<ArtworkController>();
+
+  String? _selectedImage;
+
+  File? imageFile;
+
+  bool isupdated = false;
+
+  final _formKey = GlobalKey<FormState>();
+
+  void uploadImage() async {
+    try {
+      imageFile = await artworkController.pickImage();
+      if (imageFile != null) {
+        setState(() {
+          _selectedImage = imageFile!.path;
+        });
+      } else {
+        Get.snackbar(
+            'Error', 'Failed to upload profile image. Please try again.');
+      }
+    } catch (e) {
+      Get.snackbar(
+          'Error', 'Failed to upload profile image. Please try again.');
+    }
+  }
+
+  void saveImage() async {
+    await artworkController.uploadImage(imageFile!, true);
+    await userController.updateUserImage(imageFile!);
+    Get.snackbar('Success', 'Profile image uploaded successfully');
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (userController.user.value != null &&
+        userController.user.value!.imageUrl != null) {
+      _selectedImage = userController.user.value!.imageUrl;
+    } else {
+      _selectedImage = "assets/profile placeholder.png";
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final String name = userController.user.value?.name ?? "No Name";
+    final String email = userController.user.value?.email ?? "No Email";
+    final String password =
+        userController.user.value?.password ?? "No Password";
     var _size = MediaQuery.of(context).size;
-    final UserController userController = Get.find<UserController>();
+
     void function() async {
       await userController.updateIsLoggedIn(false);
 
-      Get.offAndToNamed(MyGet.login); // Navigate to Home Screen
+      Get.offAndToNamed(MyGet.login); // Navigate to Login Screen
     }
 
     return Scaffold(
@@ -23,7 +76,7 @@ class ProfileView extends StatelessWidget {
           // Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/background(2).jpg', // Replace with your background image asset
+              'assets/background(2).jpg',
               fit: BoxFit.fill,
             ),
           ),
@@ -46,27 +99,13 @@ class ProfileView extends StatelessWidget {
                       Stack(
                         alignment: Alignment.bottomRight,
                         children: [
-                          Container(
-                            width: 120,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/profile.jpg'), // Replace with your profile image asset
-                                fit: BoxFit
-                                    .cover, // Ensures the image fits within the circle
-                              ),
-                            ),
-                          ),
+                          Imagebox(),
                           Positioned(
                             bottom: 0,
                             right: 0,
                             child: IconButton(
                               icon: Icon(Icons.edit, color: Colors.white),
-                              onPressed: () {
-                                // Implement image edit functionality
-                              },
+                              onPressed: uploadImage,
                               color: primarycolor,
                               splashColor: primarycolor,
                               highlightColor: primarycolor,
@@ -75,21 +114,31 @@ class ProfileView extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 16),
-                      Text(
-                        name,
-                        style: AppFonts.bodyText1,
+                      SizedBox(
+                        width: _size.width * 0.5,
+                        height: 50,
+                        child: CustomButton(
+                          text: 'Save Image',
+                          parver: 10.0,
+                          onpress: saveImage,
+                        ),
                       ),
                       SizedBox(height: 18),
                       Divider(),
                       SizedBox(height: 24),
                       Text(
+                        name,
+                        style: AppFonts.bodyText1,
+                      ),
+                      SizedBox(height: 18),
+                      Text(
                         email,
                         style: AppFonts.bodyText1,
                       ),
                       SizedBox(height: 18),
-                      if (contactNo.isNotEmpty)
+                      if (password.isNotEmpty)
                         Text(
-                          contactNo,
+                          password,
                           style: AppFonts.bodyText1,
                         ),
                       SizedBox(height: 25),
@@ -99,7 +148,10 @@ class ProfileView extends StatelessWidget {
                         child: CustomButton(
                           text: 'Edit Profile',
                           parver: 10.0,
-                          onpress: () {},
+                          onpress: () {
+                            _showEditProfileDialog(context, userController,
+                                artworkController, _formKey);
+                          },
                         ),
                       ),
                       Spacer(),
@@ -108,8 +160,22 @@ class ProfileView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               // Implement delete account functionality
+                              bool? confirm = await showConfirmationDialog(
+                                context,
+                                title: "Delete Acount",
+                                content: "Are you sure to delete account",
+                              );
+
+                              if (confirm == true) {
+                                userController.clearUser(email);
+                                artworkController
+                                    .deleteArtworksByArtistEmail(email);
+                                Get.offAndToNamed(MyGet.login);
+                              } else {
+                                Get.snackbar("Cancelled", "Deletion cancelled");
+                              }
                             },
                             child: Text(
                               'Delete Account',
@@ -118,8 +184,18 @@ class ProfileView extends StatelessWidget {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
-                              function();
+                            onTap: () async {
+                              bool? confirm = await showConfirmationDialog(
+                                context,
+                                title: "Logout Acount",
+                                content: "Are you sure to Logout your account",
+                              );
+
+                              if (confirm == true) {
+                                function();
+                              } else {
+                                Get.snackbar("Cancelled", "Logout cancelled");
+                              }
                             },
                             child: Text(
                               'Logout',
@@ -136,7 +212,7 @@ class ProfileView extends StatelessWidget {
           ),
           // Back Arrow Button
           Positioned(
-            top: 40, // Adjust this value as needed
+            top: 40,
             left: 20,
             child: IconButton(
               icon: Icon(Icons.arrow_back, color: primarycolor),
@@ -149,4 +225,152 @@ class ProfileView extends StatelessWidget {
       ),
     );
   }
+
+  // ignore: non_constant_identifier_names
+  Widget Imagebox() {
+    debugPrint(
+        "+++++++++$_selectedImage++++++++${userController.user.value!.imageUrl}+++++++++");
+
+    return ClipOval(
+      child: Container(
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey[300], // Adjust this color as needed
+        ),
+        child: _selectedImage == userController.user.value!.imageUrl
+            ? Image.file(
+                File(_selectedImage!),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return errorImageWidget(); // Error icon if image fails to load
+                },
+              )
+            : imageFile != null
+                ? Image.file(
+                    imageFile!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return errorImageWidget(); // Error icon if image fails to load
+                    },
+                  )
+                : Image.asset(
+                    _selectedImage!,
+                    fit: BoxFit.cover,
+                  ),
+      ),
+    );
+  }
+
+  Widget errorImageWidget() {
+    return Container(
+      width: 120,
+      height: 120,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.grey[300],
+      ),
+      child: Icon(
+        Icons.error,
+        color: Colors.red,
+        size: 40,
+      ),
+    );
+  }
+}
+
+void _showEditProfileDialog(BuildContext context, UserController userController,
+    ArtworkController artworkController, GlobalKey<FormState> _formKey) {
+  final TextEditingController nameController =
+      TextEditingController(text: userController.user.value!.name);
+  final TextEditingController emailController =
+      TextEditingController(text: userController.user.value!.email);
+  final TextEditingController passwordController =
+      TextEditingController(text: userController.user.value!.password);
+  var _size = MediaQuery.of(context).size;
+
+  void function() async {
+    String oldEmail = userController.user.value!.email;
+    String newEmail = emailController.text;
+    if (_formKey.currentState!.validate()) {
+      // Save the updated values
+      bool isupdated = await userController.updateUser(
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      if (isupdated) {
+        debugPrint("***********$oldEmail************$newEmail***********");
+        await artworkController.updateArtistEmail(oldEmail, newEmail);
+        debugPrint("@@@@@@@@ Profile updated successfully @@@@@@@@");
+        Get.snackbar('Success', 'Profile updated successfully');
+        Get.back(); // Close the dialog
+      } else {
+        Get.snackbar('Error', 'Email already registered');
+      }
+    } else {
+      Get.snackbar('Error', 'Please fix the errors in the form');
+    }
+  }
+
+  Get.defaultDialog(
+    title: "Edit Profile",
+    content: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            customTextField(
+                validator: InputValidators.validateName,
+                controller: nameController,
+                hinttext: "Name",
+                isobscure: false,
+                icon: Icon(Icons.person),
+                maxline: 1,
+                isdesc: false),
+            SizedBox(height: 16),
+            customTextField(
+                controller: emailController,
+                validator: InputValidators.validateEmail,
+                hinttext: "Email",
+                isobscure: false,
+                icon: Icon(Icons.mail_outline),
+                maxline: 1,
+                isdesc: false),
+            SizedBox(height: 16),
+            customTextField(
+                controller: passwordController,
+                validator: InputValidators.validatePassword,
+                hinttext: "Password",
+                isobscure: false,
+                icon: Icon(Icons.lock),
+                maxline: 1,
+                isdesc: false),
+          ],
+        ),
+      ),
+    ),
+    confirm: SizedBox(
+      width: _size.width * 0.5,
+      height: 50,
+      child: CustomButton(
+        text: "Save Changes",
+        parver: 10.0,
+        onpress: function,
+      ),
+    ),
+    cancel: SizedBox(
+      width: _size.width * 0.5,
+      height: 50,
+      child: CustomButton(
+          text: "Cancel",
+          parver: 10.0,
+          onpress: () {
+            Get.back();
+          }),
+    ),
+  );
 }
