@@ -17,8 +17,21 @@ class LoginView extends StatelessWidget {
     if (_formKey.currentState!.validate()) {
       // Trigger validation
       final User? user = await userController.firebaseService.getUser(email);
+      userController.user.value = user;
+      debugPrint("Here is email**********${userController.user.value!.email}");
+      debugPrint("Here is name**********${userController.user.value!.name}");
+      debugPrint(
+          "Here is password**********${userController.user.value!.password}");
 
-      if (user != null && user.password == password) {
+      userController.saveUserOnLocalSt(user!);
+      debugPrint(
+          "Here is email on local storage**********${userController.user.value!.email}");
+      debugPrint(
+          "Here is name on local storage**********${userController.user.value!.name}");
+      debugPrint(
+          "Here is password on local storage**********${userController.user.value!.password}");
+
+      if (user.password == password) {
         await userController.updateIsLoggedIn(true);
         Get.snackbar('Success', 'Logged in successfully.');
         Get.offAndToNamed(MyGet.home);
@@ -46,7 +59,7 @@ class LoginView extends StatelessWidget {
           // Profile Card
           Center(
             child: Card(
-              margin: EdgeInsets.all(20),
+              margin: const EdgeInsets.all(20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -73,29 +86,29 @@ class LoginView extends StatelessWidget {
                           ),
                         ),
 
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Email TextFormField
                         customTextField(
                           validator: InputValidators.validateEmail,
                           controller: emailController,
                           hinttext: "Email",
                           isobscure: false,
-                          icon: Icon(Icons.mail_outline),
+                          icon: const Icon(Icons.mail_outline),
                           maxline: 1,
                           isdesc: false,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Password TextFormField
                         customTextField(
                           validator: InputValidators.validatePassword,
                           controller: passwordController,
                           hinttext: "Password",
                           isobscure: true,
-                          icon: Icon(Icons.lock_outline_rounded),
+                          icon: const Icon(Icons.lock_outline_rounded),
                           maxline: 1,
                           isdesc: false,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -111,13 +124,13 @@ class LoginView extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         CustomButton(
                           text: "Login",
                           parver: 12.0,
                           onpress: function,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

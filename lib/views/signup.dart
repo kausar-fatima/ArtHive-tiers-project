@@ -46,7 +46,7 @@ class SignUpView extends StatelessWidget {
           // Profile Card
           Center(
             child: Card(
-              margin: EdgeInsets.all(20),
+              margin: const EdgeInsets.all(20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -72,40 +72,40 @@ class SignUpView extends StatelessWidget {
                                 .copyWith(fontSize: 22, color: secondarycolor),
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Name TextFormField
                         customTextField(
                           controller: nameController,
                           hinttext: "Name",
-                          icon: Icon(Icons.person_outline),
+                          icon: const Icon(Icons.person_outline),
                           isobscure: false,
                           validator: InputValidators.validateName,
                           maxline: 1,
                           isdesc: false,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Email TextFormField
                         customTextField(
                           controller: emailController,
                           validator: InputValidators.validateEmail,
                           hinttext: "Email",
                           isobscure: false,
-                          icon: Icon(Icons.mail_outline),
+                          icon: const Icon(Icons.mail_outline),
                           maxline: 1,
                           isdesc: false,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Password TextFormField
                         customTextField(
                           validator: InputValidators.validatePassword,
                           controller: passwordController,
                           hinttext: "Password",
                           isobscure: true,
-                          icon: Icon(Icons.lock_outline_rounded),
+                          icon: const Icon(Icons.lock_outline_rounded),
                           maxline: 1,
                           isdesc: false,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -125,7 +125,7 @@ class SignUpView extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         CustomButton(
                           text: "Sign up",
                           parver: 12.0,

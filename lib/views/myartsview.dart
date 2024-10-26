@@ -20,7 +20,7 @@ class _MyArtsViewState extends State<MyArtsView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image:
                 AssetImage('assets/background(2).jpg'), // Your background image
@@ -67,12 +67,12 @@ class _MyArtsViewState extends State<MyArtsView> {
             onPressed: () {
               Get.to(() => AddEditArtworkView(isEdit: false));
             },
+            backgroundColor: white,
+            shape: const CircleBorder(),
             child: Icon(
               Icons.add,
               color: primarycolor,
             ),
-            backgroundColor: white,
-            shape: CircleBorder(),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
@@ -93,15 +93,15 @@ class _MyArtsViewState extends State<MyArtsView> {
 class MyArtsListContent extends StatelessWidget {
   final ArtworkController artworkController = Get.find<ArtworkController>();
   MyArtsListContent({
-    Key? key,
+    super.key,
     required this.artData,
-  }) : super(key: key);
+  });
 
   final RxList<Artwork> artData;
 
   @override
   Widget build(BuildContext context) {
-    var _size = MediaQuery.of(context).size;
+    var size = MediaQuery.of(context).size;
     return Obx(() {
       return ListView.builder(
         itemCount: artData.length, // Specify the number of items
@@ -144,7 +144,7 @@ class MyArtsListContent extends StatelessWidget {
                           artItem.imageUrl.isEmpty
                               ? "assets/placeholder.jpg"
                               : artItem.imageUrl, // Use image URL from artwork
-                          height: _size.width * 0.46,
+                          height: size.width * 0.46,
                           width: double.infinity,
                           fit: BoxFit.cover,
                           loadingBuilder: (BuildContext context, Widget child,
@@ -154,7 +154,7 @@ class MyArtsListContent extends StatelessWidget {
                             } else {
                               return Center(
                                 child: Container(
-                                  height: _size.width * 0.46,
+                                  height: size.width * 0.46,
                                   width: double.infinity,
                                   color: Colors.grey[
                                       300], // Background color while loading
@@ -180,10 +180,10 @@ class MyArtsListContent extends StatelessWidget {
                           },
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
-                              height: _size.width * 0.46,
+                              height: size.width * 0.46,
                               width: double.infinity,
                               color: Colors.grey[300],
-                              child: Icon(
+                              child: const Icon(
                                 Icons.error,
                                 color: Colors.red,
                                 size: 40,
@@ -192,7 +192,7 @@ class MyArtsListContent extends StatelessWidget {
                           },
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
                         artItem.title,
                         style: AppFonts.heading3,
@@ -205,14 +205,14 @@ class MyArtsListContent extends StatelessWidget {
                         overflow: TextOverflow.ellipsis, // Handle overflow
                         maxLines: 1, // Limit to one line
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
                         artItem.description,
                         style: AppFonts.bodyText2,
                         overflow: TextOverflow.ellipsis, // Handle overflow
                         maxLines: 3, // Limit to three lines
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -220,7 +220,7 @@ class MyArtsListContent extends StatelessWidget {
                             '\$${artItem.price}',
                             style: AppFonts.bodyText1,
                           ),
-                          Spacer(),
+                          const Spacer(),
                           IconButton(
                             icon: Icon(
                               Icons.edit,
@@ -234,7 +234,7 @@ class MyArtsListContent extends StatelessWidget {
                             },
                           ),
                           IconButton(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.delete,
                               color: Colors.red,
                             ),

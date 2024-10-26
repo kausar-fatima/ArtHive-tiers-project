@@ -3,7 +3,7 @@ import 'package:art_hive_app/headers.dart';
 
 // ignore: must_be_immutable
 class AddEditArtworkView extends StatefulWidget {
-  AddEditArtworkView({super.key, required this.isEdit, this.artwork});
+  const AddEditArtworkView({super.key, required this.isEdit, this.artwork});
   final bool isEdit;
   final Artwork? artwork;
 
@@ -155,7 +155,7 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
           // Artwork Form Card
           Center(
             child: Card(
-              margin: EdgeInsets.all(20),
+              margin: const EdgeInsets.all(20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -179,14 +179,14 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                                 color: primarycolor,
                               ),
                             ),
-                            Spacer(),
+                            const Spacer(),
                             Text(
                                 !widget.isEdit ? "Add Artwork" : "Edit Artwork",
                                 style: AppFonts.heading3),
-                            Spacer(),
+                            const Spacer(),
                           ],
                         ),
-                        SizedBox(height: 25),
+                        const SizedBox(height: 25),
                         // Upload Section
                         _selectedImage == null
                             ? GestureDetector(
@@ -198,7 +198,7 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                                       color: primarycolor,
                                       size: 40,
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Text(
                                       'Upload Artwork Image',
                                       style: AppFonts.bodyText2
@@ -245,18 +245,18 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                                     ),
                                 ],
                               ),
-                        SizedBox(height: 25),
+                        const SizedBox(height: 25),
                         // Title TextFormField
                         customTextField(
                           controller: titleController,
                           validator: InputValidators.validateTitle,
                           hinttext: "Title",
                           isobscure: false,
-                          icon: Icon(Icons.title),
+                          icon: const Icon(Icons.title),
                           maxline: 1,
                           isdesc: false,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         // Artist Name TextFormField
                         customTextField(
@@ -264,11 +264,11 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                           validator: InputValidators.validateArtistName,
                           hinttext: "Artist Name",
                           isobscure: false,
-                          icon: Icon(Icons.person_outline),
+                          icon: const Icon(Icons.person_outline),
                           maxline: 1,
                           isdesc: false,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         // Description TextFormField
                         customTextField(
@@ -276,11 +276,11 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                           validator: InputValidators.validateDesc,
                           hinttext: "Description",
                           isobscure: false,
-                          icon: Icon(Icons.description_outlined),
+                          icon: const Icon(Icons.description_outlined),
                           maxline: 5, // Allow more lines for description
                           isdesc: true,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         // Price TextFormField
                         customTextField(
@@ -288,11 +288,11 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                           validator: InputValidators.validatePrice,
                           hinttext: "Price",
                           isobscure: false,
-                          icon: Icon(Icons.attach_money_outlined),
+                          icon: const Icon(Icons.attach_money_outlined),
                           maxline: 1,
                           isdesc: false,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         // Art Style TextFormField
                         customTextField(
@@ -300,22 +300,22 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                           validator: InputValidators.validateStyle,
                           hinttext: "Art Style",
                           isobscure: false,
-                          icon: Icon(Icons.brush_outlined),
+                          icon: const Icon(Icons.brush_outlined),
                           maxline: 1,
                           isdesc: false,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         customTextField(
                           controller: phoneNoController,
                           validator: InputValidators.validatePhoneNumber,
                           hinttext: "Phone No",
                           isobscure: false,
-                          icon: Icon(Icons.phone),
+                          icon: const Icon(Icons.phone),
                           maxline: 1,
                           isdesc: false,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         CustomButton(
                           text: !widget.isEdit ? "Add Artwork" : "Edit Artwork",
@@ -390,7 +390,7 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
         borderRadius: BorderRadius.circular(8),
         color: Colors.grey[300],
       ),
-      child: Icon(
+      child: const Icon(
         Icons.error,
         color: Colors.red,
         size: 40,

@@ -13,7 +13,7 @@ class ListContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var _size = MediaQuery.of(context).size;
+    var size = MediaQuery.of(context).size;
     return Obx(
       () => ListView.builder(
         itemCount: artData.length, // Specify the number of items
@@ -57,9 +57,9 @@ class ListContent extends StatelessWidget {
                               ? "assets/placeholder.jpg"
                               : artItem.imageUrl,
                           height: !isFavorite
-                              ? _size.width * 0.46
-                              : _size.width * 0.28,
-                          width: _size.width * 0.41,
+                              ? size.width * 0.46
+                              : size.width * 0.28,
+                          width: size.width * 0.41,
                           fit: BoxFit.cover,
                           loadingBuilder: (BuildContext context, Widget child,
                               ImageChunkEvent? loadingProgress) {
@@ -69,9 +69,9 @@ class ListContent extends StatelessWidget {
                               return Center(
                                 child: Container(
                                   height: !isFavorite
-                                      ? _size.width * 0.46
-                                      : _size.width * 0.28,
-                                  width: _size.width * 0.41,
+                                      ? size.width * 0.46
+                                      : size.width * 0.28,
+                                  width: size.width * 0.41,
                                   color: Colors.grey[
                                       300], // Background color while loading
                                   child: Center(
@@ -97,11 +97,11 @@ class ListContent extends StatelessWidget {
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
                               height: !isFavorite
-                                  ? _size.width * 0.46
-                                  : _size.width * 0.28,
-                              width: _size.width * 0.41,
+                                  ? size.width * 0.46
+                                  : size.width * 0.28,
+                              width: size.width * 0.41,
                               color: Colors.grey[300],
-                              child: Icon(
+                              child: const Icon(
                                 Icons.error,
                                 color: Colors.red,
                                 size: 40,
@@ -110,7 +110,7 @@ class ListContent extends StatelessWidget {
                           },
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Expanded(
@@ -134,7 +134,7 @@ class ListContent extends StatelessWidget {
                               maxLines: 1, // Limit to one line
                             ),
                             if (!isFavorite)
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                             if (!isFavorite)
@@ -145,7 +145,7 @@ class ListContent extends StatelessWidget {
                                     TextOverflow.ellipsis, // Handle overflow
                                 maxLines: 3, // Limit to one line
                               ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
@@ -155,10 +155,10 @@ class ListContent extends StatelessWidget {
                                   "\$${artItem.price.toString()}",
                                   style: AppFonts.bodyText1,
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 if (isFavorite)
                                   IconButton(
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.delete,
                                       color: Colors.red,
                                     ),

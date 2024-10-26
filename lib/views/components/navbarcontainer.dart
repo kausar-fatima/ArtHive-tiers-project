@@ -14,7 +14,7 @@ class NavBarContainer extends StatefulWidget {
 class _NavBarContainerState extends State<NavBarContainer> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 60,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -20,7 +20,7 @@ class _FavoriteViewState extends State<FavoriteView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image:
                 AssetImage('assets/background(2).jpg'), // Your background image
@@ -71,12 +71,12 @@ class _FavoriteViewState extends State<FavoriteView> {
             onPressed: () {
               Get.to(() => AddEditArtworkView(isEdit: false));
             },
+            backgroundColor: white,
+            shape: const CircleBorder(),
             child: Icon(
               Icons.add,
               color: primarycolor,
             ),
-            backgroundColor: white,
-            shape: CircleBorder(),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,

@@ -46,7 +46,7 @@ class ForgotPasswordView extends StatelessWidget {
           // Profile Card
           Center(
             child: Card(
-              margin: EdgeInsets.all(20),
+              margin: const EdgeInsets.all(20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -64,36 +64,36 @@ class ForgotPasswordView extends StatelessWidget {
                             Text('Forgot Password', style: AppFonts.heading3),
                       ),
 
-                      SizedBox(height: 25),
+                      const SizedBox(height: 25),
                       // Email TextFormField
                       customTextField(
                         controller: emailController,
                         validator: InputValidators.validateEmail,
                         hinttext: "Email",
                         isobscure: false,
-                        icon: Icon(Icons.mail_outline),
+                        icon: const Icon(Icons.mail_outline),
                         maxline: 1,
                         isdesc: false,
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       // Password TextFormField
                       customTextField(
                         controller: newPasswordController,
                         validator: InputValidators.validatePassword,
                         hinttext: "New Password",
                         isobscure: true,
-                        icon: Icon(Icons.lock_outline_rounded),
+                        icon: const Icon(Icons.lock_outline_rounded),
                         maxline: 1,
                         isdesc: false,
                       ),
 
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       CustomButton(
                         text: "Reset Password",
                         parver: 12.0,
                         onpress: function,
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

@@ -34,19 +34,19 @@ class MyGet {
         ),
         GetPage(
           name: home,
-          page: () => HomeView(),
+          page: () => const HomeView(),
         ),
         GetPage(
           name: myarts,
-          page: () => MyArtsView(),
+          page: () => const MyArtsView(),
         ),
         GetPage(
           name: favorite,
-          page: () => FavoriteView(),
+          page: () => const FavoriteView(),
         ),
         GetPage(
           name: profile,
-          page: () => ProfileView(),
+          page: () => const ProfileView(),
         ),
       ];
 }

@@ -4,7 +4,8 @@ import 'package:art_hive_app/headers.dart';
 class ArtDetailsView extends StatefulWidget {
   final Map<String, dynamic> artData;
 
-  ArtDetailsView({required this.artData, required this.ismyart});
+  const ArtDetailsView(
+      {super.key, required this.artData, required this.ismyart});
   final bool ismyart;
 
   @override
@@ -30,7 +31,7 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
       body: SafeArea(
         child: Stack(
           children: [
-            Container(
+            SizedBox(
               height: double.infinity,
               width: double.infinity,
               child: Image.asset(
@@ -46,11 +47,11 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
                   Stack(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         height: 300,
                         width: double.infinity,
                         child: ClipRRect(
-                          borderRadius: BorderRadius.all(
+                          borderRadius: const BorderRadius.all(
                             Radius.circular(24),
                           ),
                           child: Image.network(
@@ -91,7 +92,7 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
                                 color: Colors.grey[300],
-                                child: Icon(
+                                child: const Icon(
                                   Icons.error,
                                   color: Colors.red,
                                   size: 40,
@@ -105,7 +106,8 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
                         top: 20,
                         left: 20,
                         child: IconButton(
-                          icon: Icon(Icons.arrow_back, color: Colors.white),
+                          icon:
+                              const Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () {
                             Get.back();
                           },
@@ -113,7 +115,7 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
@@ -124,7 +126,7 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
                           widget.artData['title']!,
                           style: AppFonts.heading1.copyWith(fontSize: 24),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         // Artist name
                         Text(
                           'by ${widget.artData['artist']}',
@@ -132,51 +134,51 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
                               fontStyle: FontStyle.italic,
                               color: Colors.grey[700]),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Description
                         Text(
                           'Description',
                           style: AppFonts.heading2.copyWith(fontSize: 18),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           widget.artData['description']!,
                           style: AppFonts.bodyText2,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Artist style
                         Text(
                           'Artist Style',
                           style: AppFonts.heading2.copyWith(fontSize: 18),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           widget.artData['artistStyle']!,
                           style: AppFonts.bodyText2,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Price
                         Text(
                           'Price',
                           style: AppFonts.heading2.copyWith(fontSize: 18),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           "\$${widget.artData['price']!}",
                           style: AppFonts.bodyText1,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Contact number
                         Text(
                           'Contact Number',
                           style: AppFonts.heading2.copyWith(fontSize: 18),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           widget.artData['phoneNo']!,
                           style: AppFonts.bodyText1,
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         // Add to favorite button
                         if (!widget.ismyart)
                           CustomButton(
@@ -197,7 +199,7 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
                               },
                               text: text,
                               parver: 15.0),
-                        if (!widget.ismyart) SizedBox(height: 30),
+                        if (!widget.ismyart) const SizedBox(height: 30),
                       ],
                     ),
                   ),

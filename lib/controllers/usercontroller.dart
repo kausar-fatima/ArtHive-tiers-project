@@ -22,10 +22,14 @@ class UserController extends GetxController {
       // If the email already exists, don't allow the save
       Get.snackbar("Sign up Error", "Email already registered");
     } else {
-      await localStorageService.saveUser(newUser);
+      saveUserOnLocalSt(newUser);
       await firebaseService.saveUser(newUser);
       user.value = newUser;
     }
+  }
+
+  Future<void> saveUserOnLocalSt(User newUser) async {
+    await localStorageService.saveUser(newUser);
   }
 
   // Method to update user information with email uniqueness check

@@ -80,7 +80,7 @@ class ArtworkController extends GetxController {
       debugPrint("***********${snapshot.docs}************");
       artworks.value =
           snapshot.docs.map((doc) => Artwork.fromDocument(doc)).toList();
-      debugPrint("***********${artworks}************");
+      debugPrint("***********$artworks************");
     } catch (e) {
       debugPrint('Error fetching artworks: $e');
     } finally {
@@ -258,7 +258,7 @@ class ArtworkController extends GetxController {
       return await snapshot.ref.getDownloadURL();
     } catch (e) {
       print('Error uploading image: $e');
-      throw e;
+      rethrow;
     }
   }
 

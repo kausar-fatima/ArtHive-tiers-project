@@ -39,21 +39,24 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   void saveImage() async {
-    await artworkController.uploadImage(imageFile!, true);
-    await userController.updateUserImage(imageFile!);
-    Get.snackbar('Success', 'Profile image uploaded successfully');
+    if (imageFile != null) {
+      await artworkController.uploadImage(imageFile!, true);
+      await userController.updateUserImage(imageFile!);
+      Get.snackbar('Success', 'Profile image uploaded successfully');
+    } else {
+      Get.snackbar('Error', 'No image selected to upload.');
+    }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
-    if (userController.user.value != null &&
-        userController.user.value!.imageUrl != null) {
-      _selectedImage = userController.user.value!.imageUrl;
+    super.initState();
+    if (userController.user.value != null) {
+      _selectedImage = userController.user.value!.imageUrl ??
+          "assets/profile placeholder.png";
     } else {
       _selectedImage = "assets/profile placeholder.png";
     }
-    super.initState();
   }
 
   @override
@@ -62,7 +65,7 @@ class _ProfileViewState extends State<ProfileView> {
     final String email = userController.user.value?.email ?? "No Email";
     final String password =
         userController.user.value?.password ?? "No Password";
-    var _size = MediaQuery.of(context).size;
+    var size = MediaQuery.of(context).size;
 
     void function() async {
       await userController.updateIsLoggedIn(false);
@@ -83,7 +86,7 @@ class _ProfileViewState extends State<ProfileView> {
           // Profile Card
           Center(
             child: Card(
-              margin: EdgeInsets.all(20),
+              margin: const EdgeInsets.all(20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -91,8 +94,8 @@ class _ProfileViewState extends State<ProfileView> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: SizedBox(
-                  height: _size.height * 0.6,
-                  width: _size.width * 0.7,
+                  height: size.height * 0.6,
+                  width: size.width * 0.7,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -104,7 +107,7 @@ class _ProfileViewState extends State<ProfileView> {
                             bottom: 0,
                             right: 0,
                             child: IconButton(
-                              icon: Icon(Icons.edit, color: Colors.white),
+                              icon: const Icon(Icons.edit, color: Colors.white),
                               onPressed: uploadImage,
                               color: primarycolor,
                               splashColor: primarycolor,
@@ -113,9 +116,9 @@ class _ProfileViewState extends State<ProfileView> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       SizedBox(
-                        width: _size.width * 0.5,
+                        width: size.width * 0.5,
                         height: 50,
                         child: CustomButton(
                           text: 'Save Image',
@@ -123,27 +126,27 @@ class _ProfileViewState extends State<ProfileView> {
                           onpress: saveImage,
                         ),
                       ),
-                      SizedBox(height: 18),
-                      Divider(),
-                      SizedBox(height: 24),
+                      const SizedBox(height: 18),
+                      const Divider(),
+                      const SizedBox(height: 24),
                       Text(
                         name,
                         style: AppFonts.bodyText1,
                       ),
-                      SizedBox(height: 18),
+                      const SizedBox(height: 18),
                       Text(
                         email,
                         style: AppFonts.bodyText1,
                       ),
-                      SizedBox(height: 18),
+                      const SizedBox(height: 18),
                       if (password.isNotEmpty)
                         Text(
                           password,
                           style: AppFonts.bodyText1,
                         ),
-                      SizedBox(height: 25),
+                      const SizedBox(height: 25),
                       SizedBox(
-                        width: _size.width * 0.5,
+                        width: size.width * 0.5,
                         height: 50,
                         child: CustomButton(
                           text: 'Edit Profile',
@@ -154,7 +157,7 @@ class _ProfileViewState extends State<ProfileView> {
                           },
                         ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       // Logout and Delete Account Buttons
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -271,7 +274,7 @@ class _ProfileViewState extends State<ProfileView> {
         shape: BoxShape.circle,
         color: Colors.grey[300],
       ),
-      child: Icon(
+      child: const Icon(
         Icons.error,
         color: Colors.red,
         size: 40,
@@ -281,19 +284,19 @@ class _ProfileViewState extends State<ProfileView> {
 }
 
 void _showEditProfileDialog(BuildContext context, UserController userController,
-    ArtworkController artworkController, GlobalKey<FormState> _formKey) {
+    ArtworkController artworkController, GlobalKey<FormState> formKey) {
   final TextEditingController nameController =
       TextEditingController(text: userController.user.value!.name);
   final TextEditingController emailController =
       TextEditingController(text: userController.user.value!.email);
   final TextEditingController passwordController =
       TextEditingController(text: userController.user.value!.password);
-  var _size = MediaQuery.of(context).size;
+  var size = MediaQuery.of(context).size;
 
   void function() async {
     String oldEmail = userController.user.value!.email;
     String newEmail = emailController.text;
-    if (_formKey.currentState!.validate()) {
+    if (formKey.currentState!.validate()) {
       // Save the updated values
       bool isupdated = await userController.updateUser(
         name: nameController.text,
@@ -320,7 +323,7 @@ void _showEditProfileDialog(BuildContext context, UserController userController,
     content: Padding(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
       child: Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           children: [
             customTextField(
@@ -328,25 +331,25 @@ void _showEditProfileDialog(BuildContext context, UserController userController,
                 controller: nameController,
                 hinttext: "Name",
                 isobscure: false,
-                icon: Icon(Icons.person),
+                icon: const Icon(Icons.person),
                 maxline: 1,
                 isdesc: false),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             customTextField(
                 controller: emailController,
                 validator: InputValidators.validateEmail,
                 hinttext: "Email",
                 isobscure: false,
-                icon: Icon(Icons.mail_outline),
+                icon: const Icon(Icons.mail_outline),
                 maxline: 1,
                 isdesc: false),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             customTextField(
                 controller: passwordController,
                 validator: InputValidators.validatePassword,
                 hinttext: "Password",
                 isobscure: false,
-                icon: Icon(Icons.lock),
+                icon: const Icon(Icons.lock),
                 maxline: 1,
                 isdesc: false),
           ],
@@ -354,7 +357,7 @@ void _showEditProfileDialog(BuildContext context, UserController userController,
       ),
     ),
     confirm: SizedBox(
-      width: _size.width * 0.5,
+      width: size.width * 0.5,
       height: 50,
       child: CustomButton(
         text: "Save Changes",
@@ -363,7 +366,7 @@ void _showEditProfileDialog(BuildContext context, UserController userController,
       ),
     ),
     cancel: SizedBox(
-      width: _size.width * 0.5,
+      width: size.width * 0.5,
       height: 50,
       child: CustomButton(
           text: "Cancel",

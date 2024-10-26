@@ -35,7 +35,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image:
                 AssetImage('assets/background(2).jpg'), // Your background image
@@ -67,7 +67,7 @@ class _HomeViewState extends State<HomeView> {
                       hintStyle:
                           AppFonts.bodyText1.copyWith(color: Colors.grey[800]),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                           vertical: 15.0, horizontal: 20.0),
                     ),
                   ),
@@ -103,12 +103,12 @@ class _HomeViewState extends State<HomeView> {
             onPressed: () {
               Get.to(() => AddEditArtworkView(isEdit: false));
             },
+            backgroundColor: white,
+            shape: const CircleBorder(),
             child: Icon(
               Icons.add,
               color: primarycolor,
             ),
-            backgroundColor: white,
-            shape: CircleBorder(),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
