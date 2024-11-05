@@ -69,7 +69,7 @@ class _FavoriteViewState extends State<FavoriteView> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              Get.to(() => AddEditArtworkView(isEdit: false));
+              Get.to(() => const AddEditArtworkView(isEdit: false));
             },
             backgroundColor: white,
             shape: const CircleBorder(),

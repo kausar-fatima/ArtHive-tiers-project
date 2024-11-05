@@ -101,7 +101,7 @@ class _HomeViewState extends State<HomeView> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              Get.to(() => AddEditArtworkView(isEdit: false));
+              Get.to(() => const AddEditArtworkView(isEdit: false));
             },
             backgroundColor: white,
             shape: const CircleBorder(),

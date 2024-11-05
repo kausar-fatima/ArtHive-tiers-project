@@ -65,7 +65,7 @@ class _MyArtsViewState extends State<MyArtsView> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              Get.to(() => AddEditArtworkView(isEdit: false));
+              Get.to(() => const AddEditArtworkView(isEdit: false));
             },
             backgroundColor: white,
             shape: const CircleBorder(),
