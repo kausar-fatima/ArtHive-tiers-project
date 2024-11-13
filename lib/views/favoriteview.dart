@@ -40,32 +40,30 @@ class _FavoriteViewState extends State<FavoriteView> {
           ),
           backgroundColor:
               Colors.transparent, // Make Scaffold background transparent
-          body: Expanded(
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-              child: FutureBuilder(
-                  future: FavartworkController.fetchFavoriteArtwork(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+          body: Padding(
+            padding:
+                const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+            child: FutureBuilder(
+                future: FavartworkController.fetchFavoriteArtwork(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    if (FavartworkController.artworks.isEmpty) {
                       return const Center(
-                        child: CircularProgressIndicator(),
+                        child: Text('No artworks found'),
                       );
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
                     } else {
-                      if (FavartworkController.artworks.isEmpty) {
-                        return const Center(
-                          child: Text('No artworks found'),
-                        );
-                      } else {
-                        return ListContent(
-                            artData: FavartworkController.artworks,
-                            isFavorite: true);
-                      }
+                      return ListContent(
+                          artData: FavartworkController.artworks,
+                          isFavorite: true);
                     }
-                  }),
-            ),
+                  }
+                }),
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
