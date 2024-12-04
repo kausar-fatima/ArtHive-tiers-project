@@ -14,7 +14,8 @@ class ArtDetailsView extends StatefulWidget {
 
 class _ArtDetailsViewState extends State<ArtDetailsView> {
   final ArtworkController artworkController = Get.find<ArtworkController>();
-  late String text;
+  late String text =
+      widget.artData['isFavorite'] ? "Remove from Favorite" : "Add to Favorite";
   late bool isfav;
 
   @override

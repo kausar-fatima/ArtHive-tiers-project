@@ -10,37 +10,60 @@ class LoginView extends StatelessWidget {
   LoginView({super.key});
   final UserController userController = Get.find<UserController>();
 
-  void function() async {
+  // Observable state for loading
+  final RxBool isLoading = false.obs;
+
+  Future<void> function() async {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
+    // Observable state for loading
+    isLoading.value = true;
 
     if (_formKey.currentState!.validate()) {
       // Trigger validation
       final User? user = await userController.firebaseService.getUser(email);
-      userController.user.value = user;
-      debugPrint("Here is email**********${userController.user.value!.email}");
-      debugPrint("Here is name**********${userController.user.value!.name}");
-      debugPrint(
-          "Here is password**********${userController.user.value!.password}");
+      if (user?.email != null) {
+        userController.user.value = user;
+        debugPrint(
+            "Here is email**********${userController.user.value!.email}");
+        debugPrint("Here is name**********${userController.user.value!.name}");
+        debugPrint(
+            "Here is password**********${userController.user.value!.password}");
 
-      userController.saveUserOnLocalSt(user!);
-      debugPrint(
-          "Here is email on local storage**********${userController.user.value!.email}");
-      debugPrint(
-          "Here is name on local storage**********${userController.user.value!.name}");
-      debugPrint(
-          "Here is password on local storage**********${userController.user.value!.password}");
+        //userController.saveUserOnLocalSt(user!);
+        debugPrint(
+            "Here is email on local storage**********${userController.user.value!.email}");
+        debugPrint(
+            "Here is name on local storage**********${userController.user.value!.name}");
+        debugPrint(
+            "Here is password on local storage**********${userController.user.value!.password}");
 
-      if (user.password == password) {
-        await userController.updateIsLoggedIn(true);
-        Get.snackbar('Success', 'Logged in successfully.');
-        Get.offAndToNamed(MyGet.home);
+        if (user?.password == password) {
+          await userController.updateIsLoggedIn(true);
+          Get.snackbar('Login Success', 'Logged in successfully.',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.white,
+              colorText: Colors.green);
+          Get.offAndToNamed(MyGet.home);
+        } else {
+          Get.snackbar('Login Error', 'Invalid password.',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.white,
+              colorText: Colors.red);
+        }
       } else {
-        Get.snackbar('Error', 'Invalid email or password.');
+        Get.snackbar("Login Error", "User does not exist.",
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.white,
+            colorText: Colors.red);
       }
     } else {
-      Get.snackbar('Error', 'Please fix the errors in the form.');
+      Get.snackbar('Login Error', 'Please fix the errors in the form.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white,
+          colorText: Colors.red);
     }
+    isLoading.value = false;
   }
 
   @override
@@ -88,22 +111,21 @@ class LoginView extends StatelessWidget {
 
                         const SizedBox(height: 20),
                         // Email TextFormField
-                        customTextField(
+                        CustomTextField(
                           validator: InputValidators.validateEmail,
                           controller: emailController,
                           hinttext: "Email",
-                          isobscure: false,
                           icon: const Icon(Icons.mail_outline),
                           maxline: 1,
                           isdesc: false,
                         ),
                         const SizedBox(height: 20),
                         // Password TextFormField
-                        customTextField(
+                        CustomTextField(
                           validator: InputValidators.validatePassword,
                           controller: passwordController,
                           hinttext: "Password",
-                          isobscure: true,
+                          isPasswordField: true,
                           icon: const Icon(Icons.lock_outline_rounded),
                           maxline: 1,
                           isdesc: false,
@@ -125,10 +147,20 @@ class LoginView extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 20),
-                        CustomButton(
-                          text: "Login",
-                          parver: 12.0,
-                          onpress: function,
+                        Obx(
+                          () {
+                            return CustomButton(
+                              parver: 12.0,
+                              onpress: isLoading.value
+                                  ? () {} // Disable button while loading
+                                  : () async {
+                                      await function(); // Call the async function inside a synchronous wrapper
+                                    },
+                              text: isLoading.value
+                                  ? "Loading..." // Pass a String instead of Text widget
+                                  : "Login",
+                            );
+                          },
                         ),
                         const SizedBox(height: 20),
                         Row(

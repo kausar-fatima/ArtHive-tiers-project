@@ -10,21 +10,38 @@ class UserController extends GetxController {
 
   UserController(this.localStorageService, this.firebaseService);
 
-  void loadUser() {
-    user.value = localStorageService.getUser();
+  void loadUser() async {
+    user.value = await localStorageService.getUser();
     //localStorageService.clearUser();
   }
 
-  Future<void> saveUser(User newUser) async {
-    // Check if the email is already in use by another user
-    bool emailExists = await firebaseService.checkIfEmailExists(newUser.email);
-    if (emailExists) {
-      // If the email already exists, don't allow the save
-      Get.snackbar("Sign up Error", "Email already registered");
-    } else {
-      saveUserOnLocalSt(newUser);
-      await firebaseService.saveUser(newUser);
-      user.value = newUser;
+  Future<bool> saveUser(User newUser) async {
+    try {
+      // Check if the email is already in use by another user
+      bool emailExists =
+          await firebaseService.checkIfEmailExists(newUser.email);
+      if (emailExists) {
+        // If the email already exists, don't allow the save
+        Get.snackbar("Sign up Error", "Email already registered",
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.white,
+            colorText: Colors.green);
+        return false;
+      } else {
+        // Only save the user locally and remotely if the email is unique
+        await firebaseService.saveUser(newUser);
+        saveUserOnLocalSt(newUser);
+        user.value = newUser;
+        return true;
+      }
+    } catch (e) {
+      // Handle any errors (e.g., network or Firebase issues)
+      Get.snackbar(
+          "Sign up Error", "An error occurred while saving the user: $e",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white,
+          colorText: Colors.red);
+      return false;
     }
   }
 

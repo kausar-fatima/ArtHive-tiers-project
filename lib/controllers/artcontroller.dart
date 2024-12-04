@@ -6,13 +6,11 @@ class ArtworkController extends GetxController {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final UserController userController = Get.find<UserController>();
 
-  var artworks = <Artwork>[].obs; // List of artworks
-  var filteredArtworks = <Artwork>[].obs;
-  var isLoading = false.obs;
+  final RxList<Artwork> originalArtworks = <Artwork>[].obs; // Original data
+  final RxList<Artwork> artworks = <Artwork>[].obs; // Displayed data
 
   // Fetch artworks by the current artist
   Future<void> fetchMyArtwork() async {
-    isLoading.value = true;
     try {
       final String userEmail =
           userController.user.value!.email; // Get the current user's email
@@ -20,29 +18,26 @@ class ArtworkController extends GetxController {
           .collection('artworks')
           .where('artistEmail', isEqualTo: userEmail)
           .get();
+      artworks.clear();
       artworks.value =
           snapshot.docs.map((doc) => Artwork.fromDocument(doc)).toList();
     } catch (e) {
       debugPrint('Error fetching my artworks: $e');
-    } finally {
-      isLoading.value = false;
     }
   }
 
   // Fetch Favorite artworks
   Future<void> fetchFavoriteArtwork() async {
-    isLoading.value = true;
     try {
       final QuerySnapshot snapshot = await _firestore
           .collection('artworks')
           .where('favoritedBy', arrayContains: userController.user.value!.email)
           .get();
+      artworks.clear();
       artworks.value =
           snapshot.docs.map((doc) => Artwork.fromDocument(doc)).toList();
     } catch (e) {
       debugPrint('Error fetching favorite artworks: $e');
-    } finally {
-      isLoading.value = false;
     }
   }
 
@@ -73,38 +68,35 @@ class ArtworkController extends GetxController {
 
   // Fetch all artworks
   Future<void> fetchArtworks() async {
-    isLoading.value = true;
     try {
       final QuerySnapshot snapshot =
           await _firestore.collection('artworks').get();
-      debugPrint("***********${snapshot.docs}************");
-      artworks.value =
+      originalArtworks.clear();
+      artworks.clear();
+
+      final fetchedArtworks =
           snapshot.docs.map((doc) => Artwork.fromDocument(doc)).toList();
-      debugPrint("***********$artworks************");
+      originalArtworks.addAll(fetchedArtworks);
+      artworks.addAll(fetchedArtworks); // Populate both lists
     } catch (e) {
       debugPrint('Error fetching artworks: $e');
-    } finally {
-      isLoading.value = false;
     }
   }
 
   void searchArtworks(String query) {
     if (query.isNotEmpty) {
-      filteredArtworks.assignAll(
-        artworks.where((artwork) {
-          final titleLower = artwork.title.toLowerCase();
-          final artistLower = artwork.artistName.toLowerCase();
-          final styleLower = artwork.artStyle.toLowerCase();
-          final searchLower = query.toLowerCase();
-          return titleLower.contains(searchLower) ||
-              artistLower.contains(searchLower) ||
-              styleLower.contains(searchLower);
-        }).toList(),
-      );
-      artworks.assignAll(filteredArtworks);
+      final filtered = originalArtworks.where((artwork) {
+        final titleLower = artwork.title.toLowerCase();
+        final artistLower = artwork.artistName.toLowerCase();
+        final styleLower = artwork.artStyle.toLowerCase();
+        final searchLower = query.toLowerCase();
+        return titleLower.contains(searchLower) ||
+            artistLower.contains(searchLower) ||
+            styleLower.contains(searchLower);
+      }).toList();
+      artworks.assignAll(filtered); // Update displayed list
     } else {
-      artworks.clear();
-      fetchArtworks();
+      artworks.assignAll(originalArtworks); // Reset to original data
     }
   }
 
@@ -181,31 +173,50 @@ class ArtworkController extends GetxController {
 
   // function to update artist email for all artworks
   Future<void> updateArtistEmail(String oldEmail, String newEmail) async {
-    isLoading.value = true;
     try {
       // Fetch all artworks where the artistEmail matches the oldEmail
       final QuerySnapshot snapshot = await _firestore
           .collection('artworks')
           .where('artistEmail', isEqualTo: oldEmail)
           .get();
-      debugPrint("***********${snapshot.docs}************");
+
+      debugPrint(
+          "***********${snapshot.docs.length} artworks found for artistEmail************");
+
       // Update the artistEmail for each artwork
       for (var doc in snapshot.docs) {
         await _firestore.collection('artworks').doc(doc.id).update({
           'artistEmail': newEmail,
         });
       }
-      final QuerySnapshot snapshot2 = await _firestore
+
+      // Fetch all artworks where 'favoritedBy' array contains the oldEmail
+      final QuerySnapshot favoritedSnapshot = await _firestore
           .collection('artworks')
-          .where('artistEmail', isEqualTo: newEmail)
+          .where('favoritedBy', arrayContains: oldEmail)
           .get();
-      debugPrint("***********${snapshot2.docs}************");
+
+      debugPrint(
+          "***********${favoritedSnapshot.docs.length} artworks found for favoritedBy************");
+
+      // Update the favoritedBy array for each artwork
+      for (var doc in favoritedSnapshot.docs) {
+        await _firestore.collection('artworks').doc(doc.id).update({
+          'favoritedBy': FieldValue.arrayRemove([oldEmail]), // Remove oldEmail
+        });
+
+        await _firestore.collection('artworks').doc(doc.id).update({
+          'favoritedBy': FieldValue.arrayUnion([newEmail]), // Add newEmail
+        });
+      }
+
       // Optionally, refresh the local list of artworks
-      fetchArtworks();
+      // fetchArtworks();
+
+      debugPrint(
+          "***********Artist email and favoritedBy updated successfully************");
     } catch (e) {
-      debugPrint('Error updating artist email for artworks: $e');
-    } finally {
-      isLoading.value = false;
+      debugPrint('Error updating artist email or favoritedBy: $e');
     }
   }
 
@@ -221,7 +232,6 @@ class ArtworkController extends GetxController {
 
   // Delete all artworks where artistEmail matches the provided email
   Future<void> deleteArtworksByArtistEmail(String email) async {
-    isLoading.value = true;
     try {
       // Fetch all artworks where the artistEmail matches the provided email
       final QuerySnapshot snapshot = await _firestore
@@ -238,8 +248,6 @@ class ArtworkController extends GetxController {
       fetchArtworks();
     } catch (e) {
       debugPrint('Error deleting artworks by artist email: $e');
-    } finally {
-      isLoading.value = false;
     }
   }
 

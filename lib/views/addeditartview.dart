@@ -30,6 +30,9 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
 
   File? imageFile;
 
+  // Observable state for loading
+  final RxBool isLoading = false.obs;
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -68,9 +71,13 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
     String artStyle = artStyleController.text.trim();
     String phoneNo = phoneNoController.text.trim();
 
+    isLoading.value = true;
     if (_formKey.currentState!.validate()) {
       if (_selectedImage == null) {
-        Get.snackbar('Error', 'Image field is required.');
+        Get.snackbar('Image Error', 'Image field is required.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.white,
+            colorText: Colors.red);
         return;
       }
       try {
@@ -93,7 +100,11 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
               imageFile,
               false);
           debugPrint("@@@@@@@@ Artwork Edited successfully @@@@@@@@");
-          Get.snackbar('Success', 'Artwork edited successfully.');
+          Get.back();
+          Get.snackbar('Artwork Success', 'Artwork edited successfully.',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.white,
+              colorText: Colors.green);
         } else {
           // Add new artwork
           await artworkController.addArtwork(
@@ -111,17 +122,27 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
               ),
               imageFile!,
               false);
-
-          Get.snackbar('Success', 'Artwork added successfully.');
+          debugPrint("@@@@@@@@ Artwork Added successfully @@@@@@@@");
+          Get.back();
+          Get.snackbar('Artwork Success', 'Artwork uploaded successfully.',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.white,
+              colorText: Colors.green);
         }
-
-        Get.back(); // Navigate back after saving
       } catch (e) {
-        Get.snackbar('Error', 'Failed to save artwork. Please try again.');
+        Get.snackbar(
+            'Artwork Error', 'Failed to save artwork. Please try again.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.white,
+            colorText: Colors.red);
       }
     } else {
-      Get.snackbar('Error', 'Please fix the errors in the form.');
+      Get.snackbar('Artwork Error', 'Please fix the errors in the form.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white,
+          colorText: Colors.red);
     }
+    isLoading.value = false;
   }
 
   void uploadImage() async {
@@ -132,10 +153,18 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
           _selectedImage = imageFile!.path;
         });
       } else {
-        Get.snackbar('Error', 'Failed to upload image. Please try again.');
+        Get.snackbar(
+            'Image Upload Error', 'Failed to upload image. Please try again.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.white,
+            colorText: Colors.red);
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to upload image. Please try again.');
+      Get.snackbar(
+          'Image Upload Error', 'Failed to upload image. Please try again.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white,
+          colorText: Colors.red);
     }
   }
 
@@ -181,7 +210,9 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                             ),
                             const Spacer(),
                             Text(
-                                !widget.isEdit ? "Add Artwork" : "Edit Artwork",
+                                !widget.isEdit
+                                    ? "Upload Artwork"
+                                    : "Edit Artwork",
                                 style: AppFonts.heading3),
                             const Spacer(),
                           ],
@@ -195,14 +226,14 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                                   children: [
                                     Icon(
                                       Icons.upload,
-                                      color: primarycolor,
+                                      color: Colors.blue,
                                       size: 40,
                                     ),
                                     const SizedBox(height: 10),
                                     Text(
                                       'Upload Artwork Image',
                                       style: AppFonts.bodyText2
-                                          .copyWith(color: primarycolor),
+                                          .copyWith(color: Colors.blue),
                                     ),
                                   ],
                                 ),
@@ -247,11 +278,10 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                               ),
                         const SizedBox(height: 25),
                         // Title TextFormField
-                        customTextField(
+                        CustomTextField(
                           controller: titleController,
                           validator: InputValidators.validateTitle,
                           hinttext: "Title",
-                          isobscure: false,
                           icon: const Icon(Icons.title),
                           maxline: 1,
                           isdesc: false,
@@ -259,11 +289,10 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                         const SizedBox(height: 20),
 
                         // Artist Name TextFormField
-                        customTextField(
+                        CustomTextField(
                           controller: artistNameController,
                           validator: InputValidators.validateArtistName,
                           hinttext: "Artist Name",
-                          isobscure: false,
                           icon: const Icon(Icons.person_outline),
                           maxline: 1,
                           isdesc: false,
@@ -271,11 +300,10 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                         const SizedBox(height: 20),
 
                         // Description TextFormField
-                        customTextField(
+                        CustomTextField(
                           controller: descriptionController,
                           validator: InputValidators.validateDesc,
                           hinttext: "Description",
-                          isobscure: false,
                           icon: const Icon(Icons.description_outlined),
                           maxline: 5, // Allow more lines for description
                           isdesc: true,
@@ -283,11 +311,10 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                         const SizedBox(height: 20),
 
                         // Price TextFormField
-                        customTextField(
+                        CustomTextField(
                           controller: priceController,
                           validator: InputValidators.validatePrice,
                           hinttext: "Price",
-                          isobscure: false,
                           icon: const Icon(Icons.attach_money_outlined),
                           maxline: 1,
                           isdesc: false,
@@ -295,32 +322,39 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
                         const SizedBox(height: 20),
 
                         // Art Style TextFormField
-                        customTextField(
+                        CustomTextField(
                           controller: artStyleController,
                           validator: InputValidators.validateStyle,
                           hinttext: "Art Style",
-                          isobscure: false,
                           icon: const Icon(Icons.brush_outlined),
                           maxline: 1,
                           isdesc: false,
                         ),
                         const SizedBox(height: 20),
 
-                        customTextField(
+                        CustomTextField(
                           controller: phoneNoController,
                           validator: InputValidators.validatePhoneNumber,
                           hinttext: "Phone No",
-                          isobscure: false,
                           icon: const Icon(Icons.phone),
                           maxline: 1,
                           isdesc: false,
                         ),
                         const SizedBox(height: 20),
-
-                        CustomButton(
-                          text: !widget.isEdit ? "Add Artwork" : "Edit Artwork",
-                          parver: 12.0,
-                          onpress: addArtwork,
+                        Obx(
+                          () {
+                            return CustomButton(
+                              text: isLoading.value
+                                  ? "Loading..."
+                                  : !widget.isEdit
+                                      ? "Upload Artwork"
+                                      : "Edit Artwork",
+                              parver: 12.0,
+                              onpress: isLoading.value
+                                  ? () {} // Disable button while loading
+                                  : addArtwork,
+                            );
+                          },
                         ),
                       ],
                     ),

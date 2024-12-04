@@ -1,11 +1,11 @@
 import 'package:art_hive_app/headers.dart';
 
-class customTextField extends StatelessWidget {
-  const customTextField({
+class CustomTextField extends StatefulWidget {
+  const CustomTextField({
     super.key,
     required this.controller,
     required this.hinttext,
-    required this.isobscure,
+    this.isPasswordField = false,
     required this.icon,
     required this.maxline,
     required this.isdesc,
@@ -14,19 +14,29 @@ class customTextField extends StatelessWidget {
 
   final TextEditingController controller;
   final String hinttext;
-  final bool isobscure;
+  final bool isPasswordField; // Indicates if this is a password field
   final Icon icon;
   final int maxline;
   final bool isdesc;
   final String? Function(String?) validator;
 
   @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  bool isPasswordVisible = false; // Toggle password visibility
+
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
-      validator: validator,
+      controller: widget.controller,
+      validator: widget.validator,
+      obscureText:
+          widget.isPasswordField && !isPasswordVisible, // Hide/show text
+      maxLines: widget.maxline,
       decoration: InputDecoration(
-        hintText: hinttext,
+        hintText: widget.hinttext,
         hintStyle: AppFonts.bodyText2,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -43,10 +53,23 @@ class customTextField extends StatelessWidget {
         fillColor: Colors.white,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        prefixIcon: !isdesc ? icon : null,
+        prefixIcon: !widget.isdesc ? widget.icon : null,
+        errorMaxLines: 2,
+        suffixIcon: widget.isPasswordField
+            ? IconButton(
+                icon: Icon(
+                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    isPasswordVisible = !isPasswordVisible; // Toggle visibility
+                  });
+                },
+              )
+            : null,
       ),
-      obscureText: isobscure,
-      maxLines: maxline,
+      style: AppFonts.bodyText2, // Style for the input text
     );
   }
 }

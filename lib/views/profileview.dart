@@ -14,12 +14,16 @@ class _ProfileViewState extends State<ProfileView> {
   final ArtworkController artworkController = Get.find<ArtworkController>();
 
   String? _selectedImage;
+  bool isPasswordVisible = false; // Variable to control visibility
 
   File? imageFile;
 
   bool isupdated = false;
 
   final _formKey = GlobalKey<FormState>();
+
+  // Observable state for loading
+  final RxBool isLoading = false.obs;
 
   void uploadImage() async {
     try {
@@ -29,23 +33,38 @@ class _ProfileViewState extends State<ProfileView> {
           _selectedImage = imageFile!.path;
         });
       } else {
-        Get.snackbar(
-            'Error', 'Failed to upload profile image. Please try again.');
+        Get.snackbar('Image Upload Error',
+            'Failed to upload profile image. Please try again.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.white,
+            colorText: Colors.red);
       }
     } catch (e) {
-      Get.snackbar(
-          'Error', 'Failed to upload profile image. Please try again.');
+      Get.snackbar('Image Upload Error',
+          'Failed to upload profile image. Please try again.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white,
+          colorText: Colors.red);
     }
   }
 
-  void saveImage() async {
+  Future<void> saveImage() async {
+    isLoading.value = true;
     if (imageFile != null) {
       await artworkController.uploadImage(imageFile!, true);
       await userController.updateUserImage(imageFile!);
-      Get.snackbar('Success', 'Profile image uploaded successfully');
+      Get.snackbar(
+          'Image Upload Success', 'Profile image uploaded successfully',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white,
+          colorText: Colors.green);
     } else {
-      Get.snackbar('Error', 'No image selected to upload.');
+      Get.snackbar('Image Error', 'No image selected to upload.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white,
+          colorText: Colors.red);
     }
+    isLoading.value = false;
   }
 
   @override
@@ -70,7 +89,7 @@ class _ProfileViewState extends State<ProfileView> {
     void function() async {
       await userController.updateIsLoggedIn(false);
 
-      Get.offAndToNamed(MyGet.login); // Navigate to Login Screen
+      Get.offAllNamed(MyGet.login); // Navigate to Login Screen
     }
 
     return Scaffold(
@@ -120,10 +139,20 @@ class _ProfileViewState extends State<ProfileView> {
                       SizedBox(
                         width: size.width * 0.5,
                         height: 50,
-                        child: CustomButton(
-                          text: 'Save Image',
-                          parver: 10.0,
-                          onpress: saveImage,
+                        child: Obx(
+                          () {
+                            return CustomButton(
+                              text: isLoading.value
+                                  ? "Loading..." // Pass a String instead of Text widget
+                                  : "Save Image",
+                              parver: 10.0,
+                              onpress: isLoading.value
+                                  ? () {} // Disable button while loading
+                                  : () async {
+                                      await saveImage(); // Call the async function inside a synchronous wrapper
+                                    },
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(height: 18),
@@ -140,10 +169,34 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                       const SizedBox(height: 18),
                       if (password.isNotEmpty)
-                        Text(
-                          password,
-                          style: AppFonts.bodyText1,
+                        // Password Text with visibility toggle
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              isPasswordVisible
+                                  ? password
+                                  : '*' *
+                                      password
+                                          .length, // Dynamically create masked version
+                              style: AppFonts.bodyText1,
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              icon: Icon(
+                                isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  isPasswordVisible = !isPasswordVisible;
+                                });
+                              },
+                            ),
+                          ],
                         ),
+
                       const SizedBox(height: 25),
                       SizedBox(
                         width: size.width * 0.5,
@@ -175,7 +228,7 @@ class _ProfileViewState extends State<ProfileView> {
                                 userController.clearUser(email);
                                 artworkController
                                     .deleteArtworksByArtistEmail(email);
-                                Get.offAndToNamed(MyGet.login);
+                                Get.offAllNamed(MyGet.login);
                               } else {
                                 Get.snackbar("Cancelled", "Deletion cancelled");
                               }
@@ -293,9 +346,13 @@ void _showEditProfileDialog(BuildContext context, UserController userController,
       TextEditingController(text: userController.user.value!.password);
   var size = MediaQuery.of(context).size;
 
-  void function() async {
+  // Observable state for loading
+  final RxBool isLoading = false.obs;
+
+  Future<void> function() async {
     String oldEmail = userController.user.value!.email;
     String newEmail = emailController.text;
+    isLoading.value = true;
     if (formKey.currentState!.validate()) {
       // Save the updated values
       bool isupdated = await userController.updateUser(
@@ -308,14 +365,24 @@ void _showEditProfileDialog(BuildContext context, UserController userController,
         debugPrint("***********$oldEmail************$newEmail***********");
         await artworkController.updateArtistEmail(oldEmail, newEmail);
         debugPrint("@@@@@@@@ Profile updated successfully @@@@@@@@");
-        Get.snackbar('Success', 'Profile updated successfully');
         Get.back(); // Close the dialog
+        Get.snackbar('Profile Success', 'Profile updated successfully',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.white,
+            colorText: Colors.green);
       } else {
-        Get.snackbar('Error', 'Email already registered');
+        Get.snackbar('Profile Error', 'Email already registered',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.white,
+            colorText: Colors.red);
       }
     } else {
-      Get.snackbar('Error', 'Please fix the errors in the form');
+      Get.snackbar('Profile Error', 'Please fix the errors in the form',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white,
+          colorText: Colors.red);
     }
+    isLoading.value = false;
   }
 
   Get.defaultDialog(
@@ -326,29 +393,27 @@ void _showEditProfileDialog(BuildContext context, UserController userController,
         key: formKey,
         child: Column(
           children: [
-            customTextField(
+            CustomTextField(
                 validator: InputValidators.validateName,
                 controller: nameController,
                 hinttext: "Name",
-                isobscure: false,
                 icon: const Icon(Icons.person),
                 maxline: 1,
                 isdesc: false),
             const SizedBox(height: 16),
-            customTextField(
+            CustomTextField(
                 controller: emailController,
                 validator: InputValidators.validateEmail,
                 hinttext: "Email",
-                isobscure: false,
                 icon: const Icon(Icons.mail_outline),
                 maxline: 1,
                 isdesc: false),
             const SizedBox(height: 16),
-            customTextField(
+            CustomTextField(
                 controller: passwordController,
                 validator: InputValidators.validatePassword,
                 hinttext: "Password",
-                isobscure: false,
+                isPasswordField: true,
                 icon: const Icon(Icons.lock),
                 maxline: 1,
                 isdesc: false),
@@ -359,10 +424,20 @@ void _showEditProfileDialog(BuildContext context, UserController userController,
     confirm: SizedBox(
       width: size.width * 0.5,
       height: 50,
-      child: CustomButton(
-        text: "Save Changes",
-        parver: 10.0,
-        onpress: function,
+      child: Obx(
+        () {
+          return CustomButton(
+            text: isLoading.value
+                ? "Loading..." // Pass a String instead of Text widget
+                : "Save Changes",
+            parver: 10.0,
+            onpress: isLoading.value
+                ? () {} // Disable button while loading
+                : () async {
+                    await function(); // Call the async function inside a synchronous wrapper
+                  },
+          );
+        },
       ),
     ),
     cancel: SizedBox(

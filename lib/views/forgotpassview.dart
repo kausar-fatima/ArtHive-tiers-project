@@ -5,28 +5,60 @@ class ForgotPasswordView extends StatelessWidget {
   final TextEditingController newPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  // final UserController userController = Get.find<UserController>();
-
-  ForgotPasswordView({super.key});
   final UserController userController = Get.find<UserController>();
 
-  void function() async {
+  // Observable state for loading
+  final RxBool isLoading = false.obs;
+
+  ForgotPasswordView({super.key});
+
+  Future<void> function() async {
     String email = emailController.text.trim();
     String newPassword = newPasswordController.text.trim();
 
     if (_formKey.currentState!.validate()) {
-      final User? user = await userController.firebaseService.getUser(email);
+      try {
+        // Show loading indicator
+        isLoading.value = true;
 
-      if (user != null) {
-        user.password = newPassword;
-        await userController.saveUser(user); // Save updated user data
-        Get.snackbar('Success', 'Password reset successfully.');
-        Get.back(); // Navigate back to login
-      } else {
-        Get.snackbar('Error', 'User does not exist.');
+        final User? user = await userController.firebaseService.getUser(email);
+
+        if (user != null) {
+          user.password = newPassword;
+          await userController.firebaseService
+              .updateUserField(email, 'password', newPassword);
+          // Show success Snackbar
+          Get.snackbar('Password Reset Success', 'Password reset successfully.',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.white,
+              colorText: Colors.green);
+
+          // Navigate back to login after success
+          // Get.back();
+        } else {
+          // Show error Snackbar
+          Get.snackbar('Password Reset Error', 'User does not exist.',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.white,
+              colorText: Colors.red);
+        }
+      } catch (error) {
+        // Handle any errors during the process
+        Get.snackbar(
+            'Password Reset Error', 'An error occurred. Please try again.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.white,
+            colorText: Colors.red);
+      } finally {
+        // Hide loading indicator
+        isLoading.value = false;
       }
     } else {
-      Get.snackbar('Error', 'Please fix the errors in the form.');
+      // Validation failed
+      Get.snackbar('Password Reset Error', 'Please fix the errors in the form.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white,
+          colorText: Colors.red);
     }
   }
 
@@ -63,36 +95,47 @@ class ForgotPasswordView extends StatelessWidget {
                         child:
                             Text('Forgot Password', style: AppFonts.heading3),
                       ),
-
                       const SizedBox(height: 25),
+
                       // Email TextFormField
-                      customTextField(
+                      CustomTextField(
                         controller: emailController,
                         validator: InputValidators.validateEmail,
                         hinttext: "Email",
-                        isobscure: false,
                         icon: const Icon(Icons.mail_outline),
                         maxline: 1,
                         isdesc: false,
                       ),
                       const SizedBox(height: 20),
+
                       // Password TextFormField
-                      customTextField(
+                      CustomTextField(
                         controller: newPasswordController,
                         validator: InputValidators.validatePassword,
                         hinttext: "New Password",
-                        isobscure: true,
+                        isPasswordField: true,
                         icon: const Icon(Icons.lock_outline_rounded),
                         maxline: 1,
                         isdesc: false,
                       ),
 
                       const SizedBox(height: 20),
-                      CustomButton(
-                        text: "Reset Password",
-                        parver: 12.0,
-                        onpress: function,
-                      ),
+
+                      // Custom Button with loading indicator
+                      Obx(() {
+                        return CustomButton(
+                          parver: 12.0,
+                          onpress: isLoading.value
+                              ? () {} // Disable button while loading
+                              : () async {
+                                  await function(); // Call the async function inside a synchronous wrapper
+                                },
+                          text: isLoading.value
+                              ? "Loading..." // Pass a String instead of Text widget
+                              : "Reset Password",
+                        );
+                      }),
+
                       const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

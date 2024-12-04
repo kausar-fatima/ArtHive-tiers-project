@@ -1,4 +1,3 @@
-// ignore: file_names
 import './headers.dart';
 
 class MyGet {
@@ -9,9 +8,6 @@ class MyGet {
   static const String otp = '/otp';
   static const String forgotPassword = '/forgotPassword';
   static const String home = '/home';
-  static const String myarts = '/myarts';
-  static const String favorite = '/favorite';
-  static const String profile = '/profile';
 
   static const String inital_ = splash;
 
@@ -35,18 +31,6 @@ class MyGet {
         GetPage(
           name: home,
           page: () => const HomeView(),
-        ),
-        GetPage(
-          name: myarts,
-          page: () => const MyArtsView(),
-        ),
-        GetPage(
-          name: favorite,
-          page: () => const FavoriteView(),
-        ),
-        GetPage(
-          name: profile,
-          page: () => const ProfileView(),
         ),
       ];
 }

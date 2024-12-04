@@ -11,23 +11,38 @@ class SignUpView extends StatelessWidget {
   SignUpView({super.key});
   final UserController userController = Get.find<UserController>();
 
-  void function() async {
+  // Observable state for loading
+  final RxBool isLoading = false.obs;
+
+  Future<void> function() async {
     String name = nameController.text.trim();
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
+    // Observable state for loading
+    isLoading.value = true;
 
     if (_formKey.currentState!.validate()) {
       // Create a new UserModel instance
       User newUser = User(name: name, email: email, password: password);
 
       // Save the user using UserController
-      await userController.saveUser(newUser);
+      final bool success = await userController.saveUser(newUser);
 
-      Get.snackbar('Success', 'Account created successfully.');
-      Get.toNamed(MyGet.login);
+      if (success) {
+        Get.snackbar('Sign up Success', 'Account created successfully.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.white,
+            colorText: Colors.green);
+
+        Get.toNamed(MyGet.login);
+      }
     } else {
-      Get.snackbar('Error', 'Please fix the errors in the form.');
+      Get.snackbar('Sign up Error', 'Please fix the errors in the form.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.white,
+          colorText: Colors.red);
     }
+    isLoading.value = false;
   }
 
   @override
@@ -74,33 +89,31 @@ class SignUpView extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         // Name TextFormField
-                        customTextField(
+                        CustomTextField(
                           controller: nameController,
                           hinttext: "Name",
                           icon: const Icon(Icons.person_outline),
-                          isobscure: false,
                           validator: InputValidators.validateName,
                           maxline: 1,
                           isdesc: false,
                         ),
                         const SizedBox(height: 20),
                         // Email TextFormField
-                        customTextField(
+                        CustomTextField(
                           controller: emailController,
                           validator: InputValidators.validateEmail,
                           hinttext: "Email",
-                          isobscure: false,
                           icon: const Icon(Icons.mail_outline),
                           maxline: 1,
                           isdesc: false,
                         ),
                         const SizedBox(height: 20),
                         // Password TextFormField
-                        customTextField(
+                        CustomTextField(
                           validator: InputValidators.validatePassword,
                           controller: passwordController,
                           hinttext: "Password",
-                          isobscure: true,
+                          isPasswordField: true,
                           icon: const Icon(Icons.lock_outline_rounded),
                           maxline: 1,
                           isdesc: false,
@@ -126,11 +139,19 @@ class SignUpView extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 20),
-                        CustomButton(
-                          text: "Sign up",
-                          parver: 12.0,
-                          onpress: function,
-                        )
+                        Obx(() {
+                          return CustomButton(
+                            text: isLoading.value
+                                ? "Loading..." // Pass a String instead of Text widget
+                                : "Sign up",
+                            parver: 12.0,
+                            onpress: isLoading.value
+                                ? () {} // Disable button while loading
+                                : () async {
+                                    await function(); // Call the async function inside a synchronous wrapper
+                                  },
+                          );
+                        })
                       ],
                     ),
                   ),

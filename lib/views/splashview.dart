@@ -16,12 +16,12 @@ class _SplashViewState extends State<SplashView> {
 
       if (userController.user.value == null ||
           userController.user.value!.isLoggedIn != true) {
-        Get.offAndToNamed(MyGet.login);
+        Get.offAllNamed(MyGet.login);
       } else {
         debugPrint("********${userController.user.value!.email}**********");
         debugPrint("********${userController.user.value!.name}**********");
         debugPrint("********${userController.user.value!.password}**********");
-        Get.offAndToNamed(MyGet.home);
+        Get.offAllNamed(MyGet.home);
       }
     });
   }
