@@ -9,11 +9,11 @@ class SplashView extends StatefulWidget {
 
 class _SplashViewState extends State<SplashView> {
   changeScreen() {
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () async {
       final UserController userController = Get.find<UserController>();
-      userController.loadUser();
+      await userController.loadUser();
       //userController.clearUser(userController.user.value!.email);
-
+      debugPrint("After loadUser: ${userController.user.value}");
       if (userController.user.value == null ||
           userController.user.value!.isLoggedIn != true) {
         Get.offAllNamed(MyGet.login);

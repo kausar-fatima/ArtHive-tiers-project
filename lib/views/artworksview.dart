@@ -13,7 +13,8 @@ class _ArtworksviewState extends State<Artworksview> {
     final ArtworkController artworkController = Get.find<ArtworkController>();
     final TextEditingController searchController = TextEditingController();
 
-    void _onSearchChanged() {
+    void onSearchChanged() {
+      debugPrint("Search query: ${searchController.text}");
       artworkController.searchArtworks(searchController.text);
     }
 
@@ -22,13 +23,13 @@ class _ArtworksviewState extends State<Artworksview> {
       // TODO: implement initState
       super.initState();
       artworkController.fetchArtworks();
-      searchController.addListener(_onSearchChanged);
+      searchController.addListener(onSearchChanged);
     }
 
     @override
     void dispose() {
       // TODO: implement dispose
-      searchController.removeListener(_onSearchChanged);
+      searchController.removeListener(onSearchChanged);
       searchController.dispose();
       super.dispose();
     }

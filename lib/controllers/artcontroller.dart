@@ -84,6 +84,7 @@ class ArtworkController extends GetxController {
   }
 
   void searchArtworks(String query) {
+    debugPrint("Original artworks count: ${originalArtworks.length}");
     if (query.isNotEmpty) {
       final filtered = originalArtworks.where((artwork) {
         final titleLower = artwork.title.toLowerCase();
@@ -94,6 +95,7 @@ class ArtworkController extends GetxController {
             artistLower.contains(searchLower) ||
             styleLower.contains(searchLower);
       }).toList();
+      debugPrint("Filtered artworks count: ${filtered.length}");
       artworks.assignAll(filtered); // Update displayed list
     } else {
       artworks.assignAll(originalArtworks); // Reset to original data

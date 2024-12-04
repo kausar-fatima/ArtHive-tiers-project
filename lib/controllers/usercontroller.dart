@@ -10,9 +10,25 @@ class UserController extends GetxController {
 
   UserController(this.localStorageService, this.firebaseService);
 
-  void loadUser() async {
-    user.value = await localStorageService.getUser();
-    //localStorageService.clearUser();
+  Future<void> loadUser() async {
+    try {
+      user.value = await localStorageService.getUser();
+
+      if (user.value != null) {
+        // Debug statements to confirm user is loaded
+        debugPrint("User loaded successfully:");
+        debugPrint("Name: ${user.value!.name}");
+        debugPrint("Email: ${user.value!.email}");
+        debugPrint("Password: ${user.value!.password}");
+        debugPrint("Is Logged In: ${user.value!.isLoggedIn}");
+      } else {
+        // If no user is found
+        debugPrint("No user found in local storage.");
+      }
+    } catch (e) {
+      // Handle and log errors
+      debugPrint("Error while loading user: $e");
+    }
   }
 
   Future<bool> saveUser(User newUser) async {

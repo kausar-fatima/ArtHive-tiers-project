@@ -230,7 +230,10 @@ class _ProfileViewState extends State<ProfileView> {
                                     .deleteArtworksByArtistEmail(email);
                                 Get.offAllNamed(MyGet.login);
                               } else {
-                                Get.snackbar("Cancelled", "Deletion cancelled");
+                                Get.snackbar("Cancelled", "Deletion cancelled",
+                                    snackPosition: SnackPosition.TOP,
+                                    backgroundColor: Colors.white,
+                                    colorText: Colors.red);
                               }
                             },
                             child: Text(
@@ -250,7 +253,10 @@ class _ProfileViewState extends State<ProfileView> {
                               if (confirm == true) {
                                 function();
                               } else {
-                                Get.snackbar("Cancelled", "Logout cancelled");
+                                Get.snackbar("Cancelled", "Logout cancelled",
+                                    snackPosition: SnackPosition.TOP,
+                                    backgroundColor: Colors.white,
+                                    colorText: Colors.red);
                               }
                             },
                             child: Text(

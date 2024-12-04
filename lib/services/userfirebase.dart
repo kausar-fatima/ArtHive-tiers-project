@@ -10,7 +10,7 @@ class FirebaseService {
       await _dbRef
           .child('users')
           .child(user.email.replaceAll('.', '_'))
-          .set(user.toMap());
+          .set(user.toFirebaseMap());
       debugPrint("+++++++++ Added user on firebase: $user");
     } catch (e) {
       print("*********** Error saving user: $e ***********");
@@ -89,7 +89,7 @@ class FirebaseService {
       if (snapshot.exists) {
         final data = snapshot.value
             as Map<dynamic, dynamic>; // Cast to Map<dynamic, dynamic>
-        return User.fromMap(
+        return User.fromFirebaseMap(
             data.cast<String, dynamic>()); // Cast to Map<String, dynamic>
       } else {
         print("*********** User not found for email: $email ***********");

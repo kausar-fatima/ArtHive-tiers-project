@@ -8,6 +8,6 @@ export 'package:art_hive_app/controllers/controllersheaders.dart';
 export 'package:art_hive_app/models/modelsheaders.dart';
 export 'package:art_hive_app/bindings/appbinding.dart';
 export 'package:art_hive_app/views/viewsheaders.dart';
-export 'package:art_hive_app/services/servicesheaders.dart';
+export 'package:art_hive_app/services/servicesheaders.dart' hide Transaction;
 export 'package:shared_preferences/shared_preferences.dart';
 export 'package:art_hive_app/getPages.dart';

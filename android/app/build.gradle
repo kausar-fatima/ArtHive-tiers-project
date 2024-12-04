@@ -30,7 +30,7 @@ def flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "
 android {
     namespace = "arthive.com.art_hive_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "28.0.12433566"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -63,9 +63,9 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled true // if ProGuard/R8 is enabled
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            ndk {
-            debugSymbolLevel 'FULL'
-          }
+            // ndk {
+        //     debugSymbolLevel 'FULL'
+        //   }
         }
     }
 }

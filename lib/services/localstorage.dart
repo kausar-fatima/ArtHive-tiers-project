@@ -1,61 +1,35 @@
 import 'package:art_hive_app/headers.dart';
+import 'database_helper.dart';
+export 'package:sqflite/sqflite.dart';
+export 'package:path/path.dart';
 
 class LocalStorageService {
-  final SharedPreferences _prefs;
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
-  LocalStorageService(this._prefs);
+  LocalStorageService(Database db);
 
   Future<void> saveUser(User user) async {
     try {
-      await _prefs.setString('userName', user.name);
-      await _prefs.setString('userEmail', user.email);
-      await _prefs.setString('userPassword', user.password);
-      await _prefs.setBool('isLoggedIn', user.isLoggedIn);
-      if (user.imageUrl != null) {
-        await _prefs.setString('userImageUrl', user.imageUrl!);
-      }
+      await _dbHelper.saveUser(user);
     } catch (e) {
-      print("*********** Error saving user to local storage: $e ***********");
+      print("*********** Error saving user to SQLite: $e ***********");
     }
   }
 
-  User? getUser() {
+  Future<User?> getUser() async {
     try {
-      final name = _prefs.getString('userName');
-      final email = _prefs.getString('userEmail');
-      final password = _prefs.getString('userPassword');
-      final imageUrl = _prefs.getString('userImageUrl');
-      final isLoggedIn = _prefs.getBool('isLoggedIn') ?? false;
-
-      if (name != null && email != null && password != null) {
-        return User(
-          name: name,
-          email: email,
-          password: password,
-          imageUrl: imageUrl,
-          isLoggedIn: isLoggedIn,
-        );
-      } else {
-        debugPrint("There are null values");
-      }
-      return null;
+      return await _dbHelper.getUser();
     } catch (e) {
-      print(
-          "*********** Error retrieving user from local storage: $e ***********");
+      print("*********** Error retrieving user from SQLite: $e ***********");
       return null;
     }
   }
 
   Future<void> clearUser() async {
     try {
-      await _prefs.remove('userName');
-      await _prefs.remove('userEmail');
-      await _prefs.remove('userPassword');
-      await _prefs.remove('userImageUrl');
-      await _prefs.remove('isLoggedIn');
+      await _dbHelper.clearUser();
     } catch (e) {
-      print(
-          "*********** Error clearing user from local storage: $e ***********");
+      print("*********** Error clearing user from SQLite: $e ***********");
     }
   }
 }
