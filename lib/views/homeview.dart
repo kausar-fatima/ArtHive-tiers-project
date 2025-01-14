@@ -9,9 +9,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  // final ArtworkController artworkController = Get.find<ArtworkController>();
-  // final TextEditingController searchController = TextEditingController();
-
   int _currentTab = 0;
 
   final List<Widget> _pages = [
@@ -48,10 +45,13 @@ class _HomeViewState extends State<HomeView> {
       child: SafeArea(
         child: Container(
           decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                  'assets/background(2).jpg'), // Your background image
-              fit: BoxFit.fill, // Cover the whole screen
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.white,
+                Colors.grey,
+              ],
             ),
           ),
           child: Scaffold(
@@ -87,7 +87,7 @@ class _HomeViewState extends State<HomeView> {
                 FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: BottomAppBar(
               shape: const CircularNotchedRectangle(),
-              color: white.withOpacity(0.5),
+              color: white,
               notchMargin: 10,
               child: NavBarContainer(
                 currentTab: _currentTab,

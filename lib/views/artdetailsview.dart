@@ -20,7 +20,6 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isfav = widget.artData['isFavorite'];
     text = isfav ? "Remove from Favorite" : "Add to Favorite";
@@ -28,6 +27,7 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -37,7 +37,7 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
               width: double.infinity,
               child: Image.asset(
                 'assets/background.jpg',
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
               ),
             ),
             SingleChildScrollView(
@@ -48,59 +48,39 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
                   Stack(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
-                        height: 300,
+                        height: size.height * 0.6,
                         width: double.infinity,
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(24),
-                          ),
-                          child: Image.network(
-                            widget.artData['imageUrl'] == null
-                                ? "assets/placeholder.jpg"
-                                : widget
-                                    .artData['imageUrl']!, // Dynamic image path
-                            fit: BoxFit.cover,
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) {
-                                return child; // Image is fully loaded
-                              } else {
-                                return Center(
-                                  child: Container(
-                                    color: Colors.grey[
-                                        300], // Background color while loading
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null &&
-                                                loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    0
-                                            ? loadingProgress
-                                                    .cumulativeBytesLoaded /
-                                                (loadingProgress
-                                                        .expectedTotalBytes ??
-                                                    1)
-                                            : null,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey[300],
-                                child: const Icon(
-                                  Icons.error,
-                                  color: Colors.red,
-                                  size: 40,
+                        child: Image.network(
+                          widget.artData['imageUrl'] == null
+                              ? "assets/placeholder.jpg"
+                              : widget.artData['imageUrl']!,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            } else {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
                                 ),
                               );
-                            },
-                          ),
+                            }
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[300],
+                              child: const Icon(
+                                Icons.error,
+                                color: Colors.red,
+                                size: 40,
+                              ),
+                            );
+                          },
                         ),
                       ),
                       Positioned(
@@ -114,94 +94,92 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
                           },
                         ),
                       ),
+                      Positioned(
+                        bottom: 20,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.artData['title']!,
+                                style: AppFonts.heading1.copyWith(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              // Artist name
+                              Text(
+                                'by ${widget.artData['artist']}',
+                                style: AppFonts.bodyText1.copyWith(
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.white,
+                                    fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Artwork title
-                        Text(
-                          widget.artData['title']!,
-                          style: AppFonts.heading1.copyWith(fontSize: 24),
-                        ),
-                        const SizedBox(height: 10),
-                        // Artist name
-                        Text(
-                          'by ${widget.artData['artist']}',
-                          style: AppFonts.bodyText1.copyWith(
-                              fontStyle: FontStyle.italic,
-                              color: Colors.grey[700]),
-                        ),
-                        const SizedBox(height: 20),
-                        // Description
-                        Text(
-                          'Description',
-                          style: AppFonts.heading2.copyWith(fontSize: 18),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          widget.artData['description']!,
-                          style: AppFonts.bodyText2,
-                        ),
-                        const SizedBox(height: 20),
-                        // Artist style
-                        Text(
-                          'Artist Style',
-                          style: AppFonts.heading2.copyWith(fontSize: 18),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          widget.artData['artistStyle']!,
-                          style: AppFonts.bodyText2,
-                        ),
-                        const SizedBox(height: 20),
-                        // Price
-                        Text(
-                          'Price',
-                          style: AppFonts.heading2.copyWith(fontSize: 18),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "\$${widget.artData['price']!}",
-                          style: AppFonts.bodyText1,
-                        ),
-                        const SizedBox(height: 20),
-                        // Contact number
-                        Text(
-                          'Contact Number',
-                          style: AppFonts.heading2.copyWith(fontSize: 18),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          widget.artData['phoneNo']!,
-                          style: AppFonts.bodyText1,
-                        ),
-                        const SizedBox(height: 30),
-                        // Add to favorite button
-                        if (!widget.ismyart)
-                          CustomButton(
-                              onpress: () {
-                                // Add to favorite
-                                setState(
-                                  () {
+                  Container(
+                    width: double.infinity,
+                    height: size.height * 0.38,
+                    color: white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 16),
+                          // Description section
+                          Text(
+                            widget.artData['description']!,
+                            style: AppFonts.bodyText2.copyWith(
+                              height: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          // Details section
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildDetailRow('Artist Style',
+                                  widget.artData['artistStyle']!),
+                              const SizedBox(height: 10),
+                              _buildDetailRow(
+                                  'Price', "\$${widget.artData['price']}"),
+                              const SizedBox(height: 10),
+                              _buildDetailRow(
+                                  'Contact', widget.artData['phoneNo']!),
+                            ],
+                          ),
+                          Spacer(),
+                          // Add to favorite button
+                          if (!widget.ismyart)
+                            SizedBox(
+                              width: double.infinity,
+                              child: CustomButton(
+                                onpress: () {
+                                  setState(() {
                                     isfav = !isfav;
-                                    if (isfav) {
-                                      text = "Remove from Favorite";
-                                    } else if (!isfav) {
-                                      text = "Add to Favorite";
-                                    }
-                                  },
-                                );
-                                artworkController.updateFavoriteStatus(
-                                    widget.artData['id']!, isfav, true);
-                              },
-                              text: text,
-                              parver: 15.0),
-                        if (!widget.ismyart) const SizedBox(height: 30),
-                      ],
+                                    text = isfav
+                                        ? "Remove from Favorite"
+                                        : "Add to Favorite";
+                                  });
+                                  artworkController.updateFavoriteStatus(
+                                      widget.artData['id']!, isfav, true);
+                                },
+                                parver: 12.0,
+                                text: text,
+                              ),
+                            ),
+                          if (!widget.ismyart) const SizedBox(height: 30),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -210,6 +188,28 @@ class _ArtDetailsViewState extends State<ArtDetailsView> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: AppFonts.bodyText1.copyWith(
+            //fontSize: 18,
+            color: Colors.grey[700],
+          ),
+        ),
+        Text(
+          value,
+          style: AppFonts.bodyText2.copyWith(
+            //fontSize: 16,
+            color: Colors.grey[700],
+          ),
+        ),
+      ],
     );
   }
 }

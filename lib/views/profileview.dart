@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:art_hive_app/headers.dart';
+import 'package:art_hive_app/views/components/profileButtons.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -32,6 +33,7 @@ class _ProfileViewState extends State<ProfileView> {
         setState(() {
           _selectedImage = imageFile!.path;
         });
+        await saveImage();
       } else {
         Get.snackbar('Image Upload Error',
             'Failed to upload profile image. Please try again.',
@@ -93,81 +95,73 @@ class _ProfileViewState extends State<ProfileView> {
     }
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/background(2).jpg',
-              fit: BoxFit.fill,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
           ),
-          // Profile Card
-          Center(
-            child: Card(
-              margin: const EdgeInsets.all(20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 8,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SizedBox(
-                  height: size.height * 0.6,
-                  width: size.width * 0.7,
+          onPressed: () => Get.offAndToNamed(MyGet.home),
+        ),
+        title: Padding(
+          padding: EdgeInsets.only(left: size.width * 0.25),
+          child: Text(
+            "Profile",
+            style: AppFonts.heading3.copyWith(fontSize: 28),
+          ),
+        ),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.white,
+              Colors.grey,
+            ],
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Stack(
+              children: [
+                SizedBox(height: size.height * 0.05),
+                // User Information
+                Container(
+                  margin: EdgeInsets.only(
+                      left: size.width * 0.1,
+                      right: size.width * 0.1,
+                      top: size.height * 0.08,
+                      bottom: size.height * 0.05),
+                  padding: const EdgeInsets.only(top: 20, bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          Imagebox(),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.white),
-                              onPressed: uploadImage,
-                              color: primarycolor,
-                              splashColor: primarycolor,
-                              highlightColor: primarycolor,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
                       SizedBox(
-                        width: size.width * 0.5,
-                        height: 50,
-                        child: Obx(
-                          () {
-                            return CustomButton(
-                              text: isLoading.value
-                                  ? "Loading..." // Pass a String instead of Text widget
-                                  : "Save Image",
-                              parver: 10.0,
-                              onpress: isLoading.value
-                                  ? () {} // Disable button while loading
-                                  : () async {
-                                      await saveImage(); // Call the async function inside a synchronous wrapper
-                                    },
-                            );
-                          },
-                        ),
+                        height: size.height * 0.035,
                       ),
-                      const SizedBox(height: 18),
-                      const Divider(),
-                      const SizedBox(height: 24),
                       Text(
                         name,
-                        style: AppFonts.bodyText1,
+                        style: AppFonts.bodyText1
+                            .copyWith(fontWeight: FontWeight.w700),
                       ),
-                      const SizedBox(height: 18),
                       Text(
                         email,
-                        style: AppFonts.bodyText1,
                       ),
-                      const SizedBox(height: 18),
                       if (password.isNotEmpty)
                         // Password Text with visibility toggle
                         Row(
@@ -179,7 +173,6 @@ class _ProfileViewState extends State<ProfileView> {
                                   : '*' *
                                       password
                                           .length, // Dynamically create masked version
-                              style: AppFonts.bodyText1,
                             ),
                             const SizedBox(width: 8),
                             IconButton(
@@ -187,143 +180,159 @@ class _ProfileViewState extends State<ProfileView> {
                                 isPasswordVisible
                                     ? Icons.visibility
                                     : Icons.visibility_off,
+                                size: 20,
                               ),
                               onPressed: () {
-                                setState(() {
-                                  isPasswordVisible = !isPasswordVisible;
-                                });
+                                setState(
+                                  () {
+                                    isPasswordVisible = !isPasswordVisible;
+                                  },
+                                );
                               },
                             ),
                           ],
                         ),
-
-                      const SizedBox(height: 25),
-                      SizedBox(
-                        width: size.width * 0.5,
-                        height: 50,
-                        child: CustomButton(
-                          text: 'Edit Profile',
-                          parver: 10.0,
-                          onpress: () {
-                            _showEditProfileDialog(context, userController,
-                                artworkController, _formKey);
-                          },
-                        ),
-                      ),
-                      const Spacer(),
-                      // Logout and Delete Account Buttons
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              // Implement delete account functionality
-                              bool? confirm = await showConfirmationDialog(
-                                context,
-                                title: "Delete Acount",
-                                content: "Are you sure to delete account",
-                              );
-
-                              if (confirm == true) {
-                                userController.clearUser(email);
-                                artworkController
-                                    .deleteArtworksByArtistEmail(email);
-                                Get.offAllNamed(MyGet.login);
-                              } else {
-                                Get.snackbar("Cancelled", "Deletion cancelled",
-                                    snackPosition: SnackPosition.TOP,
-                                    backgroundColor: Colors.white,
-                                    colorText: Colors.red);
-                              }
-                            },
-                            child: Text(
-                              'Delete Account',
-                              style: AppFonts.bodyText2
-                                  .copyWith(color: Colors.red),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              bool? confirm = await showConfirmationDialog(
-                                context,
-                                title: "Logout Acount",
-                                content: "Are you sure to Logout your account",
-                              );
-
-                              if (confirm == true) {
-                                function();
-                              } else {
-                                Get.snackbar("Cancelled", "Logout cancelled",
-                                    snackPosition: SnackPosition.TOP,
-                                    backgroundColor: Colors.white,
-                                    colorText: Colors.red);
-                              }
-                            },
-                            child: Text(
-                              'Logout',
-                              style: AppFonts.bodyText2,
-                            ),
-                          ),
-                        ],
-                      )
                     ],
                   ),
                 ),
-              ),
+                Positioned(
+                  right: size.width / 2 - 50,
+                  left: size.width / 2 - 50,
+                  top: size.height * 0.025,
+                  child: CircleAvatar(
+                    radius: 45,
+                    backgroundColor: Colors.grey[200], // Fallback color
+                    backgroundImage:
+                        _selectedImage == userController.user.value!.imageUrl
+                            ? FileImage(File(_selectedImage!))
+                            : imageFile != null
+                                ? FileImage(imageFile!)
+                                : AssetImage('assets/placeholder.png')
+                                    as ImageProvider,
+                    onBackgroundImageError: (error, stackTrace) {
+                      errorImageWidget();
+                    },
+                  ),
+                ),
+                Positioned(
+                  right: size.width / 3 - 60,
+                  left: size.width / 2 - 50,
+                  top: size.height * 0.043,
+                  child: GestureDetector(
+                    onTap: () async {
+                      uploadImage();
+                    },
+                    child: CircleAvatar(
+                      radius: 12,
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.edit,
+                        size: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
-          ),
-          // Back Arrow Button
-          Positioned(
-            top: 40,
-            left: 20,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back, color: primarycolor),
-              onPressed: () {
-                Get.offAndToNamed(MyGet.home); // Navigate back
+            ProfileButtons(
+                text: 'Edit Profile',
+                icon: const Icon(Icons.edit),
+                onpress: () {
+                  _showEditProfileDialog(
+                      context, userController, artworkController, _formKey);
+                }),
+            // width: size.width * 0.5,
+            //             height: 50,
+            ProfileButtons(
+              text: 'Logout',
+              icon: const Icon(
+                Icons.logout,
+                weight: 8,
+              ),
+              onpress: () async {
+                bool? confirm = await showConfirmationDialog(
+                  context,
+                  title: "Logout Acount",
+                  content: "Are you sure to Logout your account",
+                );
+
+                if (confirm == true) {
+                  function();
+                } else {
+                  Get.snackbar("Cancelled", "Logout cancelled",
+                      snackPosition: SnackPosition.TOP,
+                      backgroundColor: Colors.white,
+                      colorText: Colors.red);
+                }
               },
             ),
-          ),
-        ],
-      ),
-    );
-  }
+            SizedBox(height: size.height * 0.09),
+            ProfileButtons(
+              text: 'Delete Account',
+              icon: const Icon(Icons.delete_sharp),
+              onpress: () async {
+                // Implement delete account functionality
+                bool? confirm = await showConfirmationDialog(
+                  context,
+                  title: "Delete Acount",
+                  content: "Are you sure to delete account",
+                );
 
-  // ignore: non_constant_identifier_names
-  Widget Imagebox() {
-    debugPrint(
-        "+++++++++$_selectedImage++++++++${userController.user.value!.imageUrl}+++++++++");
-
-    return ClipOval(
-      child: Container(
-        width: 120,
-        height: 120,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.grey[300], // Adjust this color as needed
+                if (confirm == true) {
+                  userController.clearUser(email);
+                  artworkController.deleteArtworksByArtistEmail(email);
+                  Get.offAllNamed(MyGet.login);
+                } else {
+                  Get.snackbar("Cancelled", "Deletion cancelled",
+                      snackPosition: SnackPosition.TOP,
+                      backgroundColor: Colors.white,
+                      colorText: Colors.red);
+                }
+              },
+            ),
+          ],
         ),
-        child: _selectedImage == userController.user.value!.imageUrl
-            ? Image.file(
-                File(_selectedImage!),
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return errorImageWidget(); // Error icon if image fails to load
-                },
-              )
-            : imageFile != null
-                ? Image.file(
-                    imageFile!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return errorImageWidget(); // Error icon if image fails to load
-                    },
-                  )
-                : Image.asset(
-                    _selectedImage!,
-                    fit: BoxFit.cover,
-                  ),
       ),
     );
   }
+
+  // Widget Imagebox() {
+  //   debugPrint(
+  //       "+++++++++$_selectedImage++++++++${userController.user.value!.imageUrl}+++++++++");
+
+  //   return ClipOval(
+  //     child: Container(
+  //       width: 120,
+  //       height: 120,
+  //       decoration: BoxDecoration(
+  //         shape: BoxShape.circle,
+  //         color: Colors.grey[300], // Adjust this color as needed
+  //       ),
+  //       child: _selectedImage == userController.user.value!.imageUrl
+  //           ? Image.file(
+  //               File(_selectedImage!),
+  //               fit: BoxFit.cover,
+  //               errorBuilder: (context, error, stackTrace) {
+  //                 return errorImageWidget(); // Error icon if image fails to load
+  //               },
+  //             )
+  //           : imageFile != null
+  //               ? Image.file(
+  //                   imageFile!,
+  //                   fit: BoxFit.cover,
+  //                   errorBuilder: (context, error, stackTrace) {
+  //                     return errorImageWidget(); // Error icon if image fails to load
+  //                   },
+  //                 )
+  //               : Image.asset(
+  //                   _selectedImage!,
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //     ),
+  //   );
+  // }
 
   Widget errorImageWidget() {
     return Container(

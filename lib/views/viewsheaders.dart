@@ -6,7 +6,7 @@ export 'package:art_hive_app/views/homeview.dart';
 export 'package:art_hive_app/views/myartsview.dart';
 export 'package:art_hive_app/views/artdetailsview.dart';
 export 'package:art_hive_app/views/artworksview.dart';
-export 'package:art_hive_app/views/components/listcontent.dart';
+export 'package:art_hive_app/views/components/favoritelistcontent.dart';
 export 'package:art_hive_app/views/components/navbarcontainer.dart';
 export 'package:art_hive_app/views/favoriteview.dart';
 export 'package:art_hive_app/views/profileview.dart';

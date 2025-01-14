@@ -36,8 +36,9 @@ class _FavoriteViewState extends State<FavoriteView> {
                 child: Text('No artworks found'),
               );
             } else {
-              return ListContent(
-                  artData: FavartworkController.artworks, isFavorite: true);
+              return FavoriteListContent(
+                favoriteArtData: FavartworkController.artworks,
+              );
             }
           }
         },
