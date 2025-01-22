@@ -5,8 +5,9 @@ export 'package:path/path.dart';
 
 class LocalStorageService {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
-
-  LocalStorageService(Database db);
+  Future<void> initialize() async {
+    await DatabaseHelper.instance.database;
+  }
 
   Future<void> saveUser(User user) async {
     try {

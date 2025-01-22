@@ -63,7 +63,7 @@ class _HomeViewState extends State<HomeView> {
                     title: Center(
                       child: Text(
                         _currentTab == 2 ? 'Favorite Artworks' : 'My Artworks',
-                        style: AppFonts.heading3.copyWith(fontSize: 28),
+                        style: AppFonts.heading3.copyWith(fontSize: 22),
                       ),
                     ),
                   )

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:art_hive_app/headers.dart';
 import 'package:art_hive_app/views/components/profileButtons.dart';
 
+import 'components/bg.dart';
+
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
 
@@ -37,14 +39,14 @@ class _ProfileViewState extends State<ProfileView> {
       } else {
         Get.snackbar('Image Upload Error',
             'Failed to upload profile image. Please try again.',
-            snackPosition: SnackPosition.TOP,
+            snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.white,
             colorText: Colors.red);
       }
     } catch (e) {
       Get.snackbar('Image Upload Error',
           'Failed to upload profile image. Please try again.',
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
           colorText: Colors.red);
     }
@@ -57,12 +59,12 @@ class _ProfileViewState extends State<ProfileView> {
       await userController.updateUserImage(imageFile!);
       Get.snackbar(
           'Image Upload Success', 'Profile image uploaded successfully',
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
           colorText: Colors.green);
     } else {
       Get.snackbar('Image Error', 'No image selected to upload.',
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
           colorText: Colors.red);
     }
@@ -114,16 +116,7 @@ class _ProfileViewState extends State<ProfileView> {
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              Colors.grey,
-            ],
-          ),
-        ),
+        decoration: kAppBg,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -262,7 +255,7 @@ class _ProfileViewState extends State<ProfileView> {
                   function();
                 } else {
                   Get.snackbar("Cancelled", "Logout cancelled",
-                      snackPosition: SnackPosition.TOP,
+                      snackPosition: SnackPosition.BOTTOM,
                       backgroundColor: Colors.white,
                       colorText: Colors.red);
                 }
@@ -286,7 +279,7 @@ class _ProfileViewState extends State<ProfileView> {
                   Get.offAllNamed(MyGet.login);
                 } else {
                   Get.snackbar("Cancelled", "Deletion cancelled",
-                      snackPosition: SnackPosition.TOP,
+                      snackPosition: SnackPosition.BOTTOM,
                       backgroundColor: Colors.white,
                       colorText: Colors.red);
                 }
@@ -382,18 +375,18 @@ void _showEditProfileDialog(BuildContext context, UserController userController,
         debugPrint("@@@@@@@@ Profile updated successfully @@@@@@@@");
         Get.back(); // Close the dialog
         Get.snackbar('Profile Success', 'Profile updated successfully',
-            snackPosition: SnackPosition.TOP,
+            snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.white,
             colorText: Colors.green);
       } else {
         Get.snackbar('Profile Error', 'Email already registered',
-            snackPosition: SnackPosition.TOP,
+            snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.white,
             colorText: Colors.red);
       }
     } else {
       Get.snackbar('Profile Error', 'Please fix the errors in the form',
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
           colorText: Colors.red);
     }

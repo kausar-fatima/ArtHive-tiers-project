@@ -45,7 +45,7 @@ class ListContent extends StatelessWidget {
                 clipBehavior: Clip.none,
                 children: [
                   // Card widget for text content
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     // height: size.height * 0.34,
                     child: Card(
@@ -85,7 +85,7 @@ class ListContent extends StatelessWidget {
                               padding: EdgeInsets.symmetric(
                                   horizontal: size.width * 0.05),
                               child: Text(
-                                "\$${artItem.price.toString()}",
+                                "Rs ${artItem.price.toString()}",
                                 style: AppFonts.bodyText1,
                               ),
                             ),

@@ -3,19 +3,20 @@ import 'dart:io';
 import 'package:art_hive_app/headers.dart';
 
 class UserController extends GetxController {
-  final LocalStorageService localStorageService;
-  final FirebaseService firebaseService;
+  LocalStorageService get localStorageService =>
+      Get.find<LocalStorageService>();
+  FirebaseService get firebaseService => Get.find<FirebaseService>();
 
   var user = Rxn<User>();
-
-  UserController(this.localStorageService, this.firebaseService);
 
   Future<void> loadUser() async {
     try {
       user.value = await localStorageService.getUser();
 
       if (user.value != null) {
+        // Change 04: Apply Re-Login so user can be verify again once app is open
         // Debug statements to confirm user is loaded
+
         debugPrint("User loaded successfully:");
         debugPrint("Name: ${user.value!.name}");
         debugPrint("Email: ${user.value!.email}");
@@ -39,9 +40,9 @@ class UserController extends GetxController {
       if (emailExists) {
         // If the email already exists, don't allow the save
         Get.snackbar("Sign up Error", "Email already registered",
-            snackPosition: SnackPosition.TOP,
+            snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.white,
-            colorText: Colors.green);
+            colorText: Colors.red);
         return false;
       } else {
         // Only save the user locally and remotely if the email is unique
@@ -54,7 +55,7 @@ class UserController extends GetxController {
       // Handle any errors (e.g., network or Firebase issues)
       Get.snackbar(
           "Sign up Error", "An error occurred while saving the user: $e",
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
           colorText: Colors.red);
       return false;

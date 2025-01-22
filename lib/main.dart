@@ -16,6 +16,11 @@ class MyApp extends StatelessWidget {
       initialBinding: AppBinding(),
       initialRoute: MyGet.inital_,
       getPages: MyGet.pages(),
+      theme: ThemeData(
+        cardTheme: CardTheme(
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }

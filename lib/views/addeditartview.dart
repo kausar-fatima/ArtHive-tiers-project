@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:art_hive_app/headers.dart';
+import 'package:art_hive_app/views/components/bg.dart';
 
 // ignore: must_be_immutable
 class AddEditArtworkView extends StatefulWidget {
@@ -75,7 +76,7 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
     if (_formKey.currentState!.validate()) {
       if (_selectedImage == null) {
         Get.snackbar('Image Error', 'Image field is required.',
-            snackPosition: SnackPosition.TOP,
+            snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.white,
             colorText: Colors.red);
         return;
@@ -102,7 +103,7 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
           debugPrint("@@@@@@@@ Artwork Edited successfully @@@@@@@@");
           Get.back();
           Get.snackbar('Artwork Success', 'Artwork edited successfully.',
-              snackPosition: SnackPosition.TOP,
+              snackPosition: SnackPosition.BOTTOM,
               backgroundColor: Colors.white,
               colorText: Colors.green);
         } else {
@@ -125,20 +126,20 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
           debugPrint("@@@@@@@@ Artwork Added successfully @@@@@@@@");
           Get.back();
           Get.snackbar('Artwork Success', 'Artwork uploaded successfully.',
-              snackPosition: SnackPosition.TOP,
+              snackPosition: SnackPosition.BOTTOM,
               backgroundColor: Colors.white,
               colorText: Colors.green);
         }
       } catch (e) {
         Get.snackbar(
             'Artwork Error', 'Failed to save artwork. Please try again.',
-            snackPosition: SnackPosition.TOP,
+            snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.white,
             colorText: Colors.red);
       }
     } else {
       Get.snackbar('Artwork Error', 'Please fix the errors in the form.',
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
           colorText: Colors.red);
     }
@@ -155,14 +156,14 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
       } else {
         Get.snackbar(
             'Image Upload Error', 'Failed to upload image. Please try again.',
-            snackPosition: SnackPosition.TOP,
+            snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.white,
             colorText: Colors.red);
       }
     } catch (e) {
       Get.snackbar(
           'Image Upload Error', 'Failed to upload image. Please try again.',
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
           colorText: Colors.red);
     }
@@ -176,11 +177,9 @@ class _AddEditArtworkViewState extends State<AddEditArtworkView> {
         children: [
           // Background Image
           Positioned.fill(
-            child: Image.asset(
-              'assets/background.jpg',
-              fit: BoxFit.fill,
-            ),
-          ),
+              child: Container(
+            decoration: kAppBg,
+          )),
           // Artwork Form Card
           Center(
             child: Card(

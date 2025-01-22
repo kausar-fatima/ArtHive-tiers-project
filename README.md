@@ -1,8 +1,8 @@
-# ArtHive App
+# Pak Artisan App
 
 ## Overview
 
-ArtHive is a Flutter application designed for artists to showcase their artworks, manage their portfolios, and engage with a community of art enthusiasts. The app integrates Firebase for data management, user authentication, and real-time updates. It features a user-friendly interface, supports data segmentation, and ensures secure and personalized user experiences.
+Pak Artisan is a Flutter application designed for artists to showcase their artworks, manage their portfolios, and engage with a community of art enthusiasts. The app integrates Firebase for data management, user authentication, and real-time updates. It features a user-friendly interface, supports data segmentation, and ensures secure and personalized user experiences.
 
 ## Features
 
@@ -83,4 +83,4 @@ flutter run
 
 ## Conclusion
 
-ArtHive provides a comprehensive platform for artists to manage and showcase their artwork collections. By integrating essential Flutter development principles with Firebase's powerful backend, this app ensures a seamless and enriched user experience.
+Pak Artisan provides a comprehensive platform for artists to manage and showcase their artwork collections. By integrating essential Flutter development principles with Firebase's powerful backend, this app ensures a seamless and enriched user experience.

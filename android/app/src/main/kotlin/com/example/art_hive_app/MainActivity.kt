@@ -1,4 +1,4 @@
-package arthive.com.art_hive_app
+package com.pakartisan.app
 
 import io.flutter.embedding.android.FlutterActivity
 

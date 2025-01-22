@@ -1,4 +1,5 @@
 import 'package:art_hive_app/headers.dart';
+import 'package:art_hive_app/views/components/bg.dart';
 
 class LoginView extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -41,25 +42,25 @@ class LoginView extends StatelessWidget {
         if (user?.password == password) {
           await userController.updateIsLoggedIn(true);
           Get.snackbar('Login Success', 'Logged in successfully.',
-              snackPosition: SnackPosition.TOP,
+              snackPosition: SnackPosition.BOTTOM,
               backgroundColor: Colors.white,
               colorText: Colors.green);
           Get.offAndToNamed(MyGet.home);
         } else {
           Get.snackbar('Login Error', 'Invalid password.',
-              snackPosition: SnackPosition.TOP,
+              snackPosition: SnackPosition.BOTTOM,
               backgroundColor: Colors.white,
               colorText: Colors.red);
         }
       } else {
         Get.snackbar("Login Error", "User does not exist.",
-            snackPosition: SnackPosition.TOP,
+            snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.white,
             colorText: Colors.red);
       }
     } else {
       Get.snackbar('Login Error', 'Please fix the errors in the form.',
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
           colorText: Colors.red);
     }
@@ -74,115 +75,119 @@ class LoginView extends StatelessWidget {
         children: [
           // Background Image
           Positioned.fill(
-            child: Image.asset(
-              'assets/background.jpg',
-              fit: BoxFit.fill,
-            ),
-          ),
+              child: Container(
+            decoration: kAppBg,
+          )),
           // Profile Card
-          Center(
-            child: Card(
-              margin: const EdgeInsets.all(20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 8,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Form(
-                  key: _formKey,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Icon(
-                          Icons.gamepad_outlined,
-                          color: secondarycolor,
-                          size: 35,
-                        ),
-                        Center(
-                          child: Text(
-                            'ArtHive',
-                            style: AppFonts.logoText
-                                .copyWith(fontSize: 22, color: secondarycolor),
-                          ),
-                        ),
 
-                        const SizedBox(height: 20),
-                        // Email TextFormField
-                        CustomTextField(
-                          validator: InputValidators.validateEmail,
-                          controller: emailController,
-                          hinttext: "Email",
-                          icon: const Icon(Icons.mail_outline),
-                          maxline: 1,
-                          isdesc: false,
-                        ),
-                        const SizedBox(height: 20),
-                        // Password TextFormField
-                        CustomTextField(
-                          validator: InputValidators.validatePassword,
-                          controller: passwordController,
-                          hinttext: "Password",
-                          isPasswordField: true,
-                          icon: const Icon(Icons.lock_outline_rounded),
-                          maxline: 1,
-                          isdesc: false,
-                        ),
-                        const SizedBox(height: 20),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Get.toNamed(MyGet.forgotPassword);
-                              },
-                              child: Text(
-                                'Forgot Password',
-                                style: AppFonts.bodyText2
-                                    .copyWith(color: Colors.blue),
+          // Change 02: Instead of Card Content . Card is made Scrollable
+          Center(
+            child: Container(
+              // Change 03: Added Constraint for Making it Responsive .
+              constraints: BoxConstraints(maxWidth: 400),
+              child: SingleChildScrollView(
+                child: Card(
+                  margin: const EdgeInsets.all(20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 8,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Icon(
+                            Icons.gamepad_outlined,
+                            color: secondarycolor,
+                            size: 35,
+                          ),
+                          Center(
+                            child: Text(
+                              'Pak Artisan',
+                              style: AppFonts.logoText.copyWith(
+                                  fontSize: 22, color: secondarycolor),
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+                          // Email TextFormField
+                          CustomTextField(
+                            validator: InputValidators.validateEmail,
+                            controller: emailController,
+                            hinttext: "Email",
+                            icon: const Icon(Icons.mail_outline),
+                            maxline: 1,
+                            isdesc: false,
+                          ),
+                          const SizedBox(height: 20),
+                          // Password TextFormField
+                          CustomTextField(
+                            validator: InputValidators.validatePassword,
+                            controller: passwordController,
+                            hinttext: "Password",
+                            isPasswordField: true,
+                            icon: const Icon(Icons.lock_outline_rounded),
+                            maxline: 1,
+                            isdesc: false,
+                          ),
+                          const SizedBox(height: 20),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Get.toNamed(MyGet.forgotPassword);
+                                },
+                                child: Text(
+                                  'Forgot Password',
+                                  style: AppFonts.bodyText2
+                                      .copyWith(color: Colors.blue),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Obx(
-                          () {
-                            return CustomButton(
-                              parver: 12.0,
-                              onpress: isLoading.value
-                                  ? () {} // Disable button while loading
-                                  : () async {
-                                      await function(); // Call the async function inside a synchronous wrapper
-                                    },
-                              text: isLoading.value
-                                  ? "Loading..." // Pass a String instead of Text widget
-                                  : "Login",
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Create your account ',
-                              style: AppFonts.bodyText2,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Get.offAndToNamed(MyGet.singup);
-                              },
-                              child: Text(
-                                'Signup',
-                                style: AppFonts.bodyText2
-                                    .copyWith(color: Colors.blue),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Obx(
+                            () {
+                              return CustomButton(
+                                parver: 12.0,
+                                onpress: isLoading.value
+                                    ? () {} // Disable button while loading
+                                    : () async {
+                                        await function(); // Call the async function inside a synchronous wrapper
+                                      },
+                                text: isLoading.value
+                                    ? "Loading..." // Pass a String instead of Text widget
+                                    : "Login",
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Create your account ',
+                                style: AppFonts.bodyText2,
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                              GestureDetector(
+                                onTap: () {
+                                  Get.offAndToNamed(MyGet.singup);
+                                },
+                                child: Text(
+                                  'Signup',
+                                  style: AppFonts.bodyText2
+                                      .copyWith(color: Colors.blue),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

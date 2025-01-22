@@ -1,4 +1,5 @@
 import 'package:art_hive_app/headers.dart';
+import 'package:art_hive_app/views/components/bg.dart';
 
 class SignUpView extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
@@ -30,7 +31,7 @@ class SignUpView extends StatelessWidget {
 
       if (success) {
         Get.snackbar('Sign up Success', 'Account created successfully.',
-            snackPosition: SnackPosition.TOP,
+            snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.white,
             colorText: Colors.green);
 
@@ -38,7 +39,7 @@ class SignUpView extends StatelessWidget {
       }
     } else {
       Get.snackbar('Sign up Error', 'Please fix the errors in the form.',
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
           colorText: Colors.red);
     }
@@ -53,106 +54,108 @@ class SignUpView extends StatelessWidget {
         children: [
           // Background Image
           Positioned.fill(
-            child: Image.asset(
-              'assets/background.jpg',
-              fit: BoxFit.fill,
-            ),
-          ),
+              child: Container(
+            decoration: kAppBg,
+          )),
           // Profile Card
           Center(
-            child: Card(
-              margin: const EdgeInsets.all(20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 8,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Form(
-                  key: _formKey,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Icon(
-                          Icons.gamepad_outlined,
-                          color: secondarycolor,
-                          size: 35,
-                        ),
-                        Center(
-                          child: Text(
-                            'ArtHive',
-                            style: AppFonts.logoText
-                                .copyWith(fontSize: 22, color: secondarycolor),
+            child: Container(
+              // Change 03: Added Constraint for Making it Responsive .
+              constraints: BoxConstraints(maxWidth: 400),
+              child: SingleChildScrollView(
+                child: Card(
+                  margin: const EdgeInsets.all(20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 8,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Icon(
+                            Icons.gamepad_outlined,
+                            color: secondarycolor,
+                            size: 35,
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        // Name TextFormField
-                        CustomTextField(
-                          controller: nameController,
-                          hinttext: "Name",
-                          icon: const Icon(Icons.person_outline),
-                          validator: InputValidators.validateName,
-                          maxline: 1,
-                          isdesc: false,
-                        ),
-                        const SizedBox(height: 20),
-                        // Email TextFormField
-                        CustomTextField(
-                          controller: emailController,
-                          validator: InputValidators.validateEmail,
-                          hinttext: "Email",
-                          icon: const Icon(Icons.mail_outline),
-                          maxline: 1,
-                          isdesc: false,
-                        ),
-                        const SizedBox(height: 20),
-                        // Password TextFormField
-                        CustomTextField(
-                          validator: InputValidators.validatePassword,
-                          controller: passwordController,
-                          hinttext: "Password",
-                          isPasswordField: true,
-                          icon: const Icon(Icons.lock_outline_rounded),
-                          maxline: 1,
-                          isdesc: false,
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Already have an account ',
-                              style: AppFonts.bodyText2,
+                          Center(
+                            child: Text(
+                              'Pak Artisan',
+                              style: AppFonts.logoText.copyWith(
+                                  fontSize: 22, color: secondarycolor),
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                Get.offAndToNamed(MyGet.login);
-                              },
-                              child: Text(
-                                'Login',
-                                style: AppFonts.bodyText2
-                                    .copyWith(color: Colors.blue),
+                          ),
+                          const SizedBox(height: 20),
+                          // Name TextFormField
+                          CustomTextField(
+                            controller: nameController,
+                            hinttext: "Name",
+                            icon: const Icon(Icons.person_outline),
+                            validator: InputValidators.validateName,
+                            maxline: 1,
+                            isdesc: false,
+                          ),
+                          const SizedBox(height: 20),
+                          // Email TextFormField
+                          CustomTextField(
+                            controller: emailController,
+                            validator: InputValidators.validateEmail,
+                            hinttext: "Email",
+                            icon: const Icon(Icons.mail_outline),
+                            maxline: 1,
+                            isdesc: false,
+                          ),
+                          const SizedBox(height: 20),
+                          // Password TextFormField
+                          CustomTextField(
+                            validator: InputValidators.validatePassword,
+                            controller: passwordController,
+                            hinttext: "Password",
+                            isPasswordField: true,
+                            icon: const Icon(Icons.lock_outline_rounded),
+                            maxline: 1,
+                            isdesc: false,
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Already have an account ',
+                                style: AppFonts.bodyText2,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Obx(() {
-                          return CustomButton(
-                            text: isLoading.value
-                                ? "Loading..." // Pass a String instead of Text widget
-                                : "Sign up",
-                            parver: 12.0,
-                            onpress: isLoading.value
-                                ? () {} // Disable button while loading
-                                : () async {
-                                    await function(); // Call the async function inside a synchronous wrapper
-                                  },
-                          );
-                        })
-                      ],
+                              GestureDetector(
+                                onTap: () {
+                                  Get.offAndToNamed(MyGet.login);
+                                },
+                                child: Text(
+                                  'Login',
+                                  style: AppFonts.bodyText2
+                                      .copyWith(color: Colors.blue),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Obx(() {
+                            return CustomButton(
+                              text: isLoading.value
+                                  ? "Loading..." // Pass a String instead of Text widget
+                                  : "Sign up",
+                              parver: 12.0,
+                              onpress: isLoading.value
+                                  ? () {} // Disable button while loading
+                                  : () async {
+                                      await function(); // Call the async function inside a synchronous wrapper
+                                    },
+                            );
+                          })
+                        ],
+                      ),
                     ),
                   ),
                 ),

@@ -33,7 +33,7 @@ class FavoriteListContent extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
                           ClipRRect(
@@ -97,7 +97,7 @@ class FavoriteListContent extends StatelessWidget {
                               children: [
                                 Text(
                                   artItem.title,
-                                  style: AppFonts.heading3,
+                                  style: AppFonts.heading4,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
@@ -111,14 +111,17 @@ class FavoriteListContent extends StatelessWidget {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      "\$${artItem.price.toString()}",
-                                      style: AppFonts.bodyText1,
+                                    Flexible(
+                                      child: FittedBox(
+                                        child: Text(
+                                          "Rs ${artItem.price.toString()}",
+                                          style: AppFonts.bodyText1,
+                                        ),
+                                      ),
                                     ),
-                                    const Spacer(),
                                     IconButton(
                                       icon: const Icon(
-                                        Icons.delete,
+                                        Icons.remove_circle,
                                         color: Colors.red,
                                       ),
                                       onPressed: () {

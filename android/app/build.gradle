@@ -13,14 +13,10 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def keyProperties = new Properties()
-def keyPropertiesFile = file("C:/Users/PMLS/Desktop/project/ArtHive-tiers-project/key.properties")
-if (keyPropertiesFile.exists()) {
-    keyPropertiesFile.withReader("UTF-8") { reader ->
-        keyProperties.load(reader)
-    }
-} else {
-    throw new FileNotFoundException("key.properties file not found")
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
 // Get flutter version code and name
@@ -28,21 +24,21 @@ def flutterVersionCode = localProperties.getProperty("flutter.versionCode") ?: "
 def flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
 
 android {
-    namespace = "arthive.com.art_hive_app"
+    namespace = "com.pakartisan.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "28.0.12433566"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_18
+        targetCompatibility = JavaVersion.VERSION_18
     }
 
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '18'
     }
 
     defaultConfig {
-        applicationId = "arthive.com.art_hive_app"
+        applicationId = "com.pakartisan.app"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
@@ -51,10 +47,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(keyProperties.getProperty("storeFile"))
-            storePassword keyProperties.getProperty("storePassword")
-            keyAlias keyProperties.getProperty("keyAlias")
-            keyPassword keyProperties.getProperty("keyPassword")
+            keyAlias = keystoreProperties['keyAlias']
+            keyPassword = keystoreProperties['keyPassword']
+            storeFile = keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword = keystoreProperties['storePassword']
         }
     }
 

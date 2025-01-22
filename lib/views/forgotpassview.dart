@@ -1,4 +1,5 @@
 import 'package:art_hive_app/headers.dart';
+import 'package:art_hive_app/views/components/bg.dart';
 
 class ForgotPasswordView extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -29,7 +30,7 @@ class ForgotPasswordView extends StatelessWidget {
               .updateUserField(email, 'password', newPassword);
           // Show success Snackbar
           Get.snackbar('Password Reset Success', 'Password reset successfully.',
-              snackPosition: SnackPosition.TOP,
+              snackPosition: SnackPosition.BOTTOM,
               backgroundColor: Colors.white,
               colorText: Colors.green);
 
@@ -38,7 +39,7 @@ class ForgotPasswordView extends StatelessWidget {
         } else {
           // Show error Snackbar
           Get.snackbar('Password Reset Error', 'User does not exist.',
-              snackPosition: SnackPosition.TOP,
+              snackPosition: SnackPosition.BOTTOM,
               backgroundColor: Colors.white,
               colorText: Colors.red);
         }
@@ -46,7 +47,7 @@ class ForgotPasswordView extends StatelessWidget {
         // Handle any errors during the process
         Get.snackbar(
             'Password Reset Error', 'An error occurred. Please try again.',
-            snackPosition: SnackPosition.TOP,
+            snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.white,
             colorText: Colors.red);
       } finally {
@@ -56,7 +57,7 @@ class ForgotPasswordView extends StatelessWidget {
     } else {
       // Validation failed
       Get.snackbar('Password Reset Error', 'Please fix the errors in the form.',
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
           colorText: Colors.red);
     }
@@ -70,11 +71,9 @@ class ForgotPasswordView extends StatelessWidget {
         children: [
           // Background Image
           Positioned.fill(
-            child: Image.asset(
-              'assets/background.jpg', // Replace with your background image asset
-              fit: BoxFit.fill,
-            ),
-          ),
+              child: Container(
+            decoration: kAppBg,
+          )),
           // Profile Card
           Center(
             child: Card(
